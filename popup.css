@@ -1,3 +1,10 @@
+body {
+    margin: 20px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
 #blocked-domains-list {
     display: flex;
     flex-direction: column;
@@ -53,11 +60,11 @@
 .tooltip {
     position: relative;
     display: inline-block;
-    
 }
 
 #show, #hide {
     text-decoration: underline;
+    font-weight: 500;
 }
 
 .term {
@@ -76,12 +83,10 @@ button.remove {
 
 #show-ass {
     color: red;
-    font-weight: 700;
-    font-family: cursive;
+    font-weight: 800;
 }
 
 #covered-ass {
     color: green;
-    font-weight: 700;
-    font-family: cursive;
+    font-weight: 800;
 }
