@@ -76,10 +76,12 @@ body {
 button.remove {
     background: none;
     height: 20px;
-    border: solid 1px;
+    border: solid 0.5px;
     margin-right: 10px;
     cursor: pointer;
+    border-radius: 10px;
 }
+
 
 #show-ass {
     color: red;
