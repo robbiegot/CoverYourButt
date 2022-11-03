@@ -1,0 +1,13 @@
+{
+  "name": "Cover Your Ass2",
+  "version": "1.2",
+  "description": "Temporarily Deletes Embarrasing History Items from your History so they don't show up during presentations",
+  "permissions": [
+    "history"
+  ],
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_icon": "./download.png"
+  },
+  "manifest_version": 2
+}
