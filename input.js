@@ -135,8 +135,22 @@ const saveAndDeleteHistory = function () {
             });
             localStorage.setItem(term, termArray.join('|||'));
             // buildPopupDom(divName, Object.values(urlObj));
-
         });
+        const cookieArray = []
+        chrome.cookies.getAll({ domain: term },
+            function (data) {
+                data.forEach((cookie) => {
+                    console.log("found in cookies", cookie.domain, cookie.value, cookie.name);
+                    // cookieArray.push(cookie.domain)
+                    // console.log("deleting from history", cookie.domain)
+                    // chrome.history.deleteUrl({ domain: cookie.domain })
+                    // localStorage.setItem(page.id, cookie.url)
+                });
+                // localStorage.setItem(term, termArray.join('|||'));
+                // buildPopupDom(divName, Object.values(urlObj));
+
+            });
+
         console.log("after deletion from history...local storage", localStorage)
     }
 }
