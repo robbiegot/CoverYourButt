@@ -4,7 +4,7 @@ class Covered {
         this.node = document.createElement('div');
         this.node.id = `term-${index}`;
         this.node.classList.add('term');
-        this.titleNode =(document.createElement('p'));
+        this.titleNode = (document.createElement('p'));
         this.titleNode.innerText = text;
         this.titleNode.classList.add('term-text');
         this.removeButton = document.createElement('button');
@@ -40,16 +40,16 @@ document.addEventListener('DOMContentLoaded', (event) => {
         showing.removeAttribute('hidden');
         covered.setAttribute('hidden', 'true');
     }
-    
+
     else if (localStorage.isCoverUOn === "on") {
         circle.style.marginLeft = '-40px'
         circle.style.background = 'green';
         covered.removeAttribute('hidden');
         showing.setAttribute('hidden', 'true');
     }
-    
-   
-    
+
+
+
     const toggle = document.getElementById("circle")
     toggle.addEventListener('click', turnOnAndOff)
 
@@ -62,21 +62,16 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     const submit = document.getElementById('form')
     submit.addEventListener('submit', (event) => {
-        if (! inputs.includes(input.value)) {
+        if (!inputs.includes(input.value)) {
             inputs.push(input.value);
             const listItem = new Covered(inputs.length, input.value);
-            // console.log(inputs);
-            // storedObj = objStringify(inputs);
-            // localStorage.setItem('userInputs', storedObj);
-            // console.log(JSON.stringify(storedObj));
-            // console.log(JSON.parse(storedObj));
             localStorage.setItem('inputsVBSV', toVBSV(inputs));
         }
     });
 
     const hideDiv = document.getElementById('hide-list');
     hideDiv.addEventListener('click', (event) => {
-        
+
         const hide = document.getElementById("hide");
         const show = document.getElementById("show");
         const list = document.getElementById('blocked-domains-list')
@@ -91,25 +86,15 @@ document.addEventListener('DOMContentLoaded', (event) => {
             show.removeAttribute('hidden')
             // list.setAttribute("hidden", 'true')
             list.style.display = "none"
-        } 
+        }
     });
-
-    // console.log('Checkpoint');
-    // const removeButtons = document.getElementsByClassName('remove')
-    // console.log(removeButtons);
-    // for (const removeButton of removeButtons) {
-    //     removeButton.addEventListener('click', (event) => {
-    //         alert('Removing');
-    //         console.log('Removing', removeButton.id);
-    //     })
-    // };
 
 });
 
 const getTermsFromStorage = function () {
-  const terms = (localStorage.inputsVBSV) ? localStorage.inputsVBSV.split('|||') : [];
-  console.log(terms);
-  return terms;
+    const terms = (localStorage.inputsVBSV) ? localStorage.inputsVBSV.split('|||') : [];
+    console.log(terms);
+    return terms;
 }
 
 function turnOnAndOff() {
@@ -117,7 +102,7 @@ function turnOnAndOff() {
     const showing = document.getElementById('show-ass');
     const covered = document.getElementById('covered-ass');
     if (localStorage.isCoverUOn === "off" || !localStorage.isCoverUOn) {
-        localStorage.setItem("isCoverUOn","on");
+        localStorage.setItem("isCoverUOn", "on");
         console.log(localStorage.isCoverUOn);
         circle.style.marginLeft = '-40px'
         circle.style.background = 'green';
@@ -126,7 +111,7 @@ function turnOnAndOff() {
         saveAndDeleteHistory();
     }
     else if (localStorage.isCoverUOn === "on") {
-        localStorage.setItem("isCoverUOn","off");
+        localStorage.setItem("isCoverUOn", "off");
         console.log(localStorage.isCoverUOn);
         circle.style.marginLeft = '-70px'
         circle.style.background = 'red';
@@ -140,30 +125,30 @@ const saveAndDeleteHistory = function () {
     const terms = getTermsFromStorage();
     for (const term of terms) {
         const termArray = [];
-        chrome.history.search({text: term, maxResults: 10000}, function(data) {
-            data.forEach(function(page) {
+        chrome.history.search({ text: term, maxResults: 10000 }, function (data) {
+            data.forEach(function (page) {
                 console.log("found in history", page.url, page.id);
                 termArray.push(page.url)
                 console.log("deleting from history", page.url)
-                chrome.history.deleteUrl({url: page.url})
+                chrome.history.deleteUrl({ url: page.url })
                 localStorage.setItem(page.id, page.url)
             });
-        localStorage.setItem(term, termArray.join('|||'));
-        // buildPopupDom(divName, Object.values(urlObj));
-           
+            localStorage.setItem(term, termArray.join('|||'));
+            // buildPopupDom(divName, Object.values(urlObj));
+
         });
-    console.log("after deletion from history...local storage", localStorage)
+        console.log("after deletion from history...local storage", localStorage)
     }
 }
 
-function addBackHistory () {
-  for (const id in localStorage) {
-    if (!isNaN(id)) {
-      console.log("adding back", localStorage[id])
-      chrome.history.addUrl({url: localStorage[id]})
-      localStorage.removeItem(id)
+function addBackHistory() {
+    for (const id in localStorage) {
+        if (!isNaN(id)) {
+            console.log("adding back", localStorage[id])
+            chrome.history.addUrl({ url: localStorage[id] })
+            localStorage.removeItem(id)
+        }
     }
-  }
 }
 
 
