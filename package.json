@@ -1,0 +1,30 @@
+{
+  "name": "coveryourbutt",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Boblobblieb/CoverYourButt.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Boblobblieb/CoverYourButt/issues"
+  },
+  "homepage": "https://github.com/Boblobblieb/CoverYourButt#readme",
+  "devDependencies": {
+    "vite": "^4.1.4"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^3.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}
