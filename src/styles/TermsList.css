@@ -2,10 +2,35 @@ table {
   width: 100%;
 }
 
+tr {
+  display: flex;
+}
+
+td {
+  /* vertical-align: middle; */
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+}
+
 .td-left {
-  text-align: left;
+  justify-content: left;
 }
 
 .td-right {
-  text-align: right;
+  justify-content: right;
+}
+
+td span {
+  opacity: 0;
+  transition: opacity 0.5s ease-in, scale 0.3s ease-out;
+  scale: 1;
+}
+
+.hover-opaque {
+  opacity: 1;
+}
+
+.hover-scale {
+  scale: 1.5;
 }
