@@ -7,7 +7,7 @@
   ],
   "action": {
     "default_popup": "index.html",
-    "default_icon": "./download.png"
+    "default_icon": "./peach.png"
   },
   "manifest_version": 3
 }
