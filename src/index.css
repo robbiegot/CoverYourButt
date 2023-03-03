@@ -11,43 +11,6 @@ body {
     flex-direction: column;
 }
 
-#switch-container {
-    display: flex;
-    flex-direction: row;
-}
-
-#pill {
-    height: 40px;
-    width: 60px;
-    border-radius: 20px;
-    background: whitesmoke;
-    border: solid black 2px;
-    z-index: 4;
-    border: solid 1px gray;
-}
-
-#peach {
-    position: relative;
-    height: 30px;
-    padding: 5px;
-    margin-left: -40px;
-    z-index: 5;
-    border-radius: 50%;
-}
-
-#circle {
-    height: 40px;
-    width: 40px;
-    background-color: white;
-    border-radius:100%;
-    border: solid black 2px;
-    margin-left: -70px;
-    transition: margin-left 500ms;
-    cursor:pointer;
-    z-index: 6;
-    border: solid 1px gray;
-}
-
 #blocked-domains-list {
     display: none;
 }

@@ -1,16 +1,13 @@
 // import React from 'react';
 
 import TitleBar from './TitleBar';
+import Toggle from './Toggle';
 
 const App = () => {
   return (
     <>
       <TitleBar />
-      <div id="switch-container">
-        <div id="pill"></div>
-        <img id="peach" src="./peach.png" />
-        <div id="circle"></div>
-      </div>
+      <Toggle />
       <h3>
         Your butt is{' '}
         <span id="show-ass">
