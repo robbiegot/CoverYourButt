@@ -11,3 +11,44 @@ export function loadCovered() {
   }
   return covered > 0; // boolean coercion
 }
+
+export function toVBSV(array) {
+  return array.join('|||');
+}
+
+export function getTermsFromStorage() {
+  const terms = localStorage.inputsVBSV
+    ? localStorage.inputsVBSV.split('|||')
+    : [];
+  console.log(terms);
+  return terms;
+}
+
+export function saveAndDeleteHistory() {
+  const terms = getTermsFromStorage();
+  for (const term of terms) {
+    const termArray = [];
+    chrome.history.search({ text: term, maxResults: 10000 }, function (data) {
+      data.forEach(function (page) {
+        console.log('found in history', page.url, page.id);
+        termArray.push(page.url);
+        console.log('deleting from history', page.url);
+        chrome.history.deleteUrl({ url: page.url });
+        localStorage.setItem(page.id, page.url);
+      });
+      localStorage.setItem(term, termArray.join('|||'));
+      // buildPopupDom(divName, Object.values(urlObj));
+    });
+    console.log('after deletion from history...local storage', localStorage);
+  }
+}
+
+export function addBackHistory() {
+  for (const id in localStorage) {
+    if (!isNaN(id)) {
+      console.log('adding back', localStorage[id]);
+      chrome.history.addUrl({ url: localStorage[id] });
+      localStorage.removeItem(id);
+    }
+  }
+}
