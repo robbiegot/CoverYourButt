@@ -6,7 +6,7 @@ const App = () => {
       <h1>App Component</h1>
       <div id="switch-container">
         <div id="pill"></div>
-        <img id="peach" src="download.png" />
+        <img id="peach" src="./peach.png" />
         <div id="circle"></div>
       </div>
       <h3>
