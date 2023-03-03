@@ -9,7 +9,7 @@ import { loadCovered, saveCovered } from '../actions';
 export default function App() {
   const [covered, setCovered] = useState(loadCovered());
   const [showList, setShowList] = useState(false);
-  const [termsList, setTermsList] = useState([]);
+  const [termsList, setTermsList] = useState(new Set(['test', 'test', '123']));
 
   const toggleCovered = () => {
     setCovered(() => !covered);
@@ -17,7 +17,16 @@ export default function App() {
   };
 
   const addTerm = (term) => {
-    setTermsList([...termsList, term])
+    if (termsList.size >= 50) return; // Maximum of 50 terms in list
+    const newTermsList = structuredClone(termsList);
+    newTermsList.add(term);
+    setTermsList(newTermsList);
+  }
+
+  const removeTerm = (term) => {
+    const newTermsList = structuredClone(termsList);
+    if (!newTermsList.delete(term)) return;
+    setTermsList(newTermsList);
   }
 
   return (
@@ -40,7 +49,7 @@ export default function App() {
         >
           {!showList ? 'Expand' : 'Collapse'}
         </div>
-        {showList && <TermsList termsList={termsList} />}
+        {showList && <TermsList termsList={termsList} removeTerm={removeTerm} />}
       </main>
     </>
   );
