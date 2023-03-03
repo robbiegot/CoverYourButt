@@ -18,7 +18,7 @@ function TableEntry({ term, removeTerm }) {
     <tr onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       <td className="td-left">{term}</td>
       <td className="td-right">
-        <span 
+        <span
           ref={spanRef}
           onClick={() => {
             return removeTerm(term);
@@ -27,8 +27,7 @@ function TableEntry({ term, removeTerm }) {
             cursor: 'pointer'
           }}
         >
-          <RxCross2
-          />
+          <RxCross2 />
         </span>
       </td>
     </tr>

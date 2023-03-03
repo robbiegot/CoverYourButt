@@ -12,6 +12,14 @@ export function loadCovered() {
   return covered > 0; // boolean coercion
 }
 
+export function saveTermsList(termsList) {
+  localStorage.setItem('termsList', JSON.stringify(termsList));
+}
+
+export function loadTermsList() {
+  return JSON.parse(localStorage.getItem('termsList') || '[]');
+}
+
 export function toVBSV(array) {
   return array.join('|||');
 }
