@@ -1,16 +1,23 @@
-export default function SearchForm() {
+import { useRef } from "react";
+
+export default function SearchForm({ addTerm }) {
+  
+  const inputRef = useRef();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    addTerm(inputRef.current.value)
+  }
+
   return (
     <form
       id="form"
-      onSubmit={(e) => {
-        e.preventDefault();
-        console.log('submit');
-      }}
+      onSubmit={handleSubmit}
     >
       <input
         type="text"
         id="input-text"
-        // ref={termRef}
+        ref={inputRef}
         autoComplete="off"
         placeholder="Domain name or title"
       />
