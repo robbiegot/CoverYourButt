@@ -32,8 +32,10 @@ export function getTermsFromStorage() {
   return terms;
 }
 
-export function saveAndDeleteHistory() {
-  const terms = getTermsFromStorage();
+export function saveAndDeleteHistoryItems() {
+  // console.log('covering');
+  // const terms = getTermsFromStorage();
+  const terms = loadTermsList();
   for (const term of terms) {
     const termArray = [];
     chrome.history.search({ text: term, maxResults: 10000 }, function (data) {
@@ -51,7 +53,8 @@ export function saveAndDeleteHistory() {
   }
 }
 
-export function addBackHistory() {
+export function restoreHistoryItems() {
+  // console.log('restoring');
   for (const id in localStorage) {
     if (!isNaN(id)) {
       console.log('adding back', localStorage[id]);
