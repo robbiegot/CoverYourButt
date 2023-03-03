@@ -1,11 +1,16 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 
 import TitleBar from './TitleBar';
 import Toggle from './Toggle';
-import { loadCovered, saveCovered} from '../actions';
+import SearchForm from './SearchForm';
+import { loadCovered, saveCovered } from '../actions';
 
-const App = () => {
+export default function App() {
   const [covered, setCovered] = useState(loadCovered());
+  const [showList, setShowList] = useState(false);
+  const [termsList, setTermsList] = useState([]);
+
+  const termRef = useRef();
 
   const toggleCovered = () => {
     setCovered(() => !covered);
@@ -17,28 +22,16 @@ const App = () => {
       <TitleBar />
       <Toggle covered={covered} toggleCovered={toggleCovered} />
       <h3>
-        Your butt is 
+        Your butt is
         {!covered && ' SHOWING'}
         {covered && ' COVERED'}
       </h3>
-      <form id="form">
-        <input
-          type="text"
-          id="input-text"
-          autoComplete="off"
-          placeholder="Domain name or title"
-        />
-        <input type="submit" id="buttonSubmit" value="Add" />
-      </form>
+      <SearchForm />
       <div id="hide-list">
-        <span id="show">Expand </span>
-        <span id="hide" hidden="true">
-          Collapse{' '}
-        </span>
+        {!showList && 'Expand'}
+        {showList && 'Collapse'}
       </div>
       <div id="blocked-domains-list"></div>
     </>
   );
 };
-
-export default App;

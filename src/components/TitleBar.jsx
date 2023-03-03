@@ -1,11 +1,9 @@
 import '../styles/TitleBar.css';
 
-const ToolBar = () => {
+export default function TitleBar() {
   return (
     <div id="title-banner">
       <h1 id="title">Cover Your Butt</h1>
     </div>
   );
-};
-
-export default ToolBar;
+}
