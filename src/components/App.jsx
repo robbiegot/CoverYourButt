@@ -1,9 +1,11 @@
-import React from 'react';
+// import React from 'react';
+
+import TitleBar from './TitleBar';
 
 const App = () => {
   return (
     <>
-      <h1>App Component</h1>
+      <TitleBar />
       <div id="switch-container">
         <div id="pill"></div>
         <img id="peach" src="./peach.png" />
@@ -20,13 +22,6 @@ const App = () => {
           COVERED
         </span>
       </h3>
-      <div id="hide-list">
-        <span id="show">Expand </span>
-        <span id="hide" hidden="true">
-          Collapse{' '}
-        </span>
-      </div>
-      <div id="blocked-domains-list"></div>
       <form id="form">
         <input
           type="text"
@@ -36,6 +31,13 @@ const App = () => {
         />
         <input type="submit" id="buttonSubmit" value="Add" />
       </form>
+      <div id="hide-list">
+        <span id="show">Expand </span>
+        <span id="hide" hidden="true">
+          Collapse{' '}
+        </span>
+      </div>
+      <div id="blocked-domains-list"></div>
     </>
   );
 };
