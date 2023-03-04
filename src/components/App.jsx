@@ -13,6 +13,8 @@ import TermsList from './TermsList';
 import TitleBar from './TitleBar';
 import Toggle from './Toggle';
 
+import styles from '../styles/App.module.css';
+
 export default function App() {
   const [covered, setCovered] = useState(loadCovered());
   const [showList, setShowList] = useState(false);
@@ -45,7 +47,7 @@ export default function App() {
       <header>
         <TitleBar />
       </header>
-      <main>
+      <main id={styles.main}>
         <Toggle covered={covered} toggleCovered={toggleCovered} />
         <h3>
           Your butt is

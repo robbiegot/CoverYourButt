@@ -1,30 +1,32 @@
 import { useRef } from 'react';
 import { RxCross2 } from 'react-icons/rx';
 
-import '../styles/TermsList.css';
+import styles from '../styles/TermsList.module.css';
 
 function TableEntry({ term, removeTerm }) {
   const spanRef = useRef();
 
   const handleMouseEnter = () => {
-    spanRef.current.classList.add('hover-opaque', 'hover-scale');
+    spanRef.current.classList.add(styles.hover_opaque, styles.hover_scale);
   };
 
   const handleMouseLeave = () => {
-    spanRef.current.classList.remove('hover-opaque', 'hover-scale');
+    spanRef.current.classList.remove(styles.hover_opaque, styles.hover_scale);
   };
 
   return (
-    <tr onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-      <td className="td-left">{term}</td>
-      <td className="td-right">
+    <tr
+      className={styles.terms_item}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <td className={styles.td_left}>{term}</td>
+      <td className={styles.td_right}>
         <span
+          className={styles.svg_wrapper}
           ref={spanRef}
           onClick={() => {
             return removeTerm(term);
-          }}
-          style={{
-            cursor: 'pointer'
           }}
         >
           <RxCross2 />
@@ -36,7 +38,7 @@ function TableEntry({ term, removeTerm }) {
 
 export default function TermsList({ termsList, removeTerm }) {
   return (
-    <table>
+    <table id={styles.terms_list}>
       <tbody>
         {Array.from(termsList).map((term) => {
           return (

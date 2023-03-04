@@ -1,0 +1,43 @@
+#terms_list {
+  width: 100%;
+}
+
+.terms_item {
+  display: flex;
+}
+
+.terms_cell {
+  /* vertical-align: middle; */
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+}
+
+.td_left {
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+  justify-content: left;
+}
+
+.td_right {
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+  justify-content: right;
+}
+
+.svg_wrapper {
+  opacity: 0;
+  scale: 1;
+  transition: opacity 0.5s ease-in, scale 0.3s ease-out;
+  cursor: pointer;
+}
+
+.hover_opaque {
+  opacity: 1;
+}
+
+.hover_scale {
+  scale: 1.5;
+}
