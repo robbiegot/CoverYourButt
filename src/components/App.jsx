@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { FiAlertTriangle } from 'react-icons/fi';
 
 import {
   loadCovered,
@@ -79,7 +80,8 @@ export default function App() {
           <section className={styles.spacer}>
             <p>
               Your butt is
-              <strong>{covered ? ' COVERED' : ' SHOWING'}</strong>
+              <strong>{covered ? ' COVERED' : ' SHOWING '}</strong>
+              {!covered && <FiAlertTriangle />}
             </p>
           </section>
         </Card>

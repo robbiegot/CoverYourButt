@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { RxCross2 } from 'react-icons/rx';
+import { FiTrash2 } from 'react-icons/fi';
 
 import styles from '../styles/TermsList.module.css';
 
@@ -25,7 +25,7 @@ function TableEntry({ term, removeTerm }) {
             return removeTerm(term);
           }}
         >
-          <RxCross2 />
+          <FiTrash2 />
         </span>
       </td>
     </tr>
