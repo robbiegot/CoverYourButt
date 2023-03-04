@@ -1,41 +1,82 @@
+:root {
+  --pill-width: 70px;
+  --pill-height: 35px;
+  --circle-size: 40px;
+}
+
+.border_box {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+
+#spacer {
+  width: 100%;
+  display: grid;
+  place-items: center;
+}
+
 #switch_container {
-  width: 60px;
-  height: 40px;
+  height: var(--circle-size);
+  width: var(--pill-width);
   display: grid;
   place-items: center;
 }
 
 #pill {
-  box-sizing: border-box;
-  height: 80%;
-  width: 100%;
-  border-radius: 20px;
-  background: whitesmoke;
-  border: solid black 2px;
+  height: var(--pill-height);
+  width: var(--pill-width);
+  border-radius: calc(min(var(--pill-height), var(--pill-width)) / 2);
+  box-shadow: 0px 2px 4px 2px rgba(0, 0, 0, 0.1);
+  background: #ddd;
   z-index: 4;
-  border: solid 0.5px gray;
+  border: solid 0.125px #ccc;
+  transition: background-color 600ms ease-in;
 }
 
 #peach {
+  filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.2));
   position: absolute;
-  height: 30px;
-  padding: 5px;
-  /* margin-left: -40px; */
+  height: var(--pill-height);
+  padding: 4px;
   z-index: 5;
-  border-radius: 50%;
+  margin-left: calc(
+    1 *
+      calc(
+        calc(var(--pill-width)) -
+          calc(min(var(--pill-height), var(--pill-width)))
+      )
+  );
 }
 
 #circle {
-  box-sizing: border-box;
   position: absolute;
-  height: 40px;
-  width: 40px;
-  background-color: white;
-  border-radius:100%;
+  height: var(--circle-size);
+  width: var(--circle-size);
+  box-shadow: -2px -2px 4px 2px rgba(0, 0, 0, 0.1) inset;
+  background-color: #fff;
+  border-radius: 100%;
   border: solid black 2px;
-  /* margin-left: -70px; */
+  margin-left: calc(
+    -1 * calc(calc(var(--pill-width)) -
+          calc(min(var(--pill-height), var(--pill-width))))
+  );
   transition: margin-left 500ms;
-  cursor:pointer;
+  cursor: pointer;
   z-index: 6;
-  border: solid 1px gray;
+  border: solid 0.125px #ccc;
+}
+
+#pill.toggled {
+  background-color: #6fbf73;
+}
+
+#circle.toggled {
+  margin-left: calc(
+    1 *
+      calc(
+        calc(var(--pill-width)) -
+          calc(min(var(--pill-height), var(--pill-width)))
+      )
+  ) !important;
 }

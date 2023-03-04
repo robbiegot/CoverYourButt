@@ -4,7 +4,7 @@ import { RxCross2 } from 'react-icons/rx';
 import styles from '../styles/TermsList.module.css';
 
 function TableEntry({ term, removeTerm }) {
-  const spanRef = useRef();
+  const spanRef = useRef(null);
 
   const handleMouseEnter = () => {
     spanRef.current.classList.add(styles.hover_opaque, styles.hover_scale);
