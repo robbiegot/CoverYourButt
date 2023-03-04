@@ -1,4 +1,4 @@
-import styles from '../styles/TitleBar.module.css';
+import styles from '@/styles/TitleBar.module.css';
 
 export default function TitleBar() {
   return (

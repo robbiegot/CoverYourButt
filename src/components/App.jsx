@@ -8,16 +8,16 @@ import {
   saveAndDeleteHistoryItems,
   saveCovered,
   saveTermsList
-} from '../actions';
-import Card from './Card';
-import CardHeader from './CardHeader';
-import SearchForm from './SearchForm';
-import TermsList from './TermsList';
-import TitleBar from './TitleBar';
-import Toggle from './Toggle';
+} from '@/actions';
+import Card from '@/components/Card';
+import CardHeader from '@/components/CardHeader';
+import SearchForm from '@/components/SearchForm';
+import TermsList from '@/components/TermsList';
+import TitleBar from '@/components/TitleBar';
+import Toggle from '@/components/Toggle';
 
-import styles from '../styles/App.module.css';
-import toggleStyles from '../styles/Toggle.module.css';
+import styles from '@/styles/App.module.css';
+import toggleStyles from '@/styles/Toggle.module.css';
 
 export default function App() {
   const [covered, setCovered] = useState(loadCovered());
@@ -42,12 +42,11 @@ export default function App() {
     }
     saveCovered(covered);
   }, [covered]);
-  
+
   useEffect(() => {
     saveTermsList(Array.from(termsList));
   }, [termsList]);
 
-  
   const addTerm = (term) => {
     if (termsList.size >= 50) return; // Maximum of 50 terms in list
     const newTermsList = structuredClone(termsList);
@@ -86,12 +85,13 @@ export default function App() {
           </section>
         </Card>
         <Card>
-          <CardHeader text={"Blocklist"} />
+          <CardHeader text={'Blocklist'} />
           <section className={styles.spacer}>
             <SearchForm addTerm={addTerm} />
           </section>
           <div
             id="expand"
+            style={{ textAlign: 'center', cursor: 'pointer' }}
             onClick={() => {
               setShowList(() => !showList);
             }}

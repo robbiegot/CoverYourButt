@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { FiTrash2 } from 'react-icons/fi';
 
-import styles from '../styles/TermsList.module.css';
+import styles from '@/styles/TermsList.module.css';
 
 function TableEntry({ term, removeTerm }) {
   const spanRef = useRef(null);

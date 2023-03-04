@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import styles from '../styles/Toggle.module.css';
+import styles from '@/styles/Toggle.module.css';
 
 export default function Toggle({
   covered,

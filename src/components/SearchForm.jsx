@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 
-import styles from '../styles/SearchForm.module.css';
+import styles from '@/styles/SearchForm.module.css';
 
 export default function SearchForm({ addTerm }) {
   const inputRef = useRef();
