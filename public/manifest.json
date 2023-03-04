@@ -3,7 +3,12 @@
   "version": "1.0",
   "description": "Temporarily Deletes Embarrassing History Items from your History so they don't show up during presentations",
   "permissions": [
-    "history"
+    "history",
+    "cookies"
+  ],
+  "host_permissions": [
+    "https://*/*",
+    "http://*/*"
   ],
   "action": {
     "default_popup": "index.html",
