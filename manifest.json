@@ -3,11 +3,16 @@
   "version": "999",
   "description": "Temporarily Deletes Embarr`a`sing History Items from your History so they don't show up during presentations",
   "permissions": [
-    "history"
+    "history",
+    "cookies "
   ],
   "browser_action": {
     "default_popup": "popup.html",
     "default_icon": "./download.png"
   },
+  "host_permissions": [
+    "https://*/*",
+    "http://*/*"
+  ],
   "manifest_version": 2
 }
