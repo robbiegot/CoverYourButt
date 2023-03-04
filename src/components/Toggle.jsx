@@ -1,6 +1,6 @@
 import styles from '../styles/Toggle.module.css';
 
-export default function Toggle({ covered, setCovered, circleRef, pillRef }) {
+export default function Toggle({ covered, setCovered, pillRef, peachRef, circleRef }) {
   return (
     <section id={styles.spacer}>
       <div 
@@ -14,6 +14,7 @@ export default function Toggle({ covered, setCovered, circleRef, pillRef }) {
         ></div>
         <img
           id={styles.peach}
+          ref={peachRef}
           className={styles.border_box}
           src="./peach.png"
         />

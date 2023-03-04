@@ -22,6 +22,7 @@ export default function App() {
   const [termsList, setTermsList] = useState(new Set(loadTermsList()));
 
   const pillRef = useRef(null);
+  const peachRef = useRef(null);
   const circleRef = useRef(null);
 
   useEffect(() => {
@@ -29,10 +30,12 @@ export default function App() {
       saveAndDeleteHistoryItems();
       circleRef.current.classList.add(toggleStyles.toggled);
       pillRef.current.classList.add(toggleStyles.toggled);
+      peachRef.current.classList.remove(toggleStyles.untoggled);
     } else {
       restoreHistoryItems();
       circleRef.current.classList.remove(toggleStyles.toggled);
       pillRef.current.classList.remove(toggleStyles.toggled);
+      peachRef.current.classList.add(toggleStyles.untoggled);
     }
     saveCovered(covered);
   }, [covered]);
@@ -64,6 +67,7 @@ export default function App() {
           covered={covered}
           setCovered={setCovered}
           pillRef={pillRef}
+          peachRef={peachRef}
           circleRef={circleRef}
         />
         <h3>

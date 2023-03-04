@@ -31,7 +31,7 @@
   background: #ddd;
   z-index: 4;
   border: solid 0.125px #ccc;
-  transition: background-color 500ms ease-in;
+  transition: background-color 400ms ease-in;
 }
 
 #peach {
@@ -69,6 +69,25 @@
 
 #pill.toggled {
   background-color: #6fbf73;
+}
+
+@keyframes wiggle {
+  0% {
+    scale: 1;
+  }
+  35% {
+    scale: 1.2;
+  }
+  50% {
+    transform: rotate(-10deg);
+  }
+  70% {
+    transform: rotate(3deg);
+  }
+}
+
+#peach.untoggled {
+  animation: wiggle 800ms ease 200ms 1 normal;
 }
 
 #circle.toggled {
