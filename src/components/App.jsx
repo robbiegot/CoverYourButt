@@ -8,7 +8,7 @@ import {
   saveAndDeleteHistoryItems,
   saveCovered,
   saveTermsList
-} from '@/actions';
+} from '@/utils/actions';
 import Card from '@/components/Card';
 import CardHeader from '@/components/CardHeader';
 import SearchForm from '@/components/SearchForm';

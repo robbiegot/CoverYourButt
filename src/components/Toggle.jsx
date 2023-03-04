@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
+import peachUrl from '@/assets/peach.png';
 import styles from '@/styles/Toggle.module.css';
 
 export default function Toggle({
@@ -19,8 +20,8 @@ export default function Toggle({
 
   useEffect(() => {
     if (!initialRender) return;
-    setInitialRender(() => false)
-  })
+    setInitialRender(() => false);
+  });
 
   return (
     <div id={styles.switch_container}>
@@ -29,7 +30,7 @@ export default function Toggle({
         id={styles.peach}
         ref={peachRef}
         className={styles.border_box}
-        src="./peach.png"
+        src={peachUrl}
         draggable={false}
       />
       <div
