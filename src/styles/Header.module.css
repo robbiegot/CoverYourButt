@@ -1,0 +1,20 @@
+.header_container {
+  display: flex;
+  flex-direction: row;
+  flex: 1 0 1;
+  align-items: center;
+  margin-bottom: 12px;
+  color: #bbb;
+}
+
+.header_spacer {
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0px 6px;
+  height: 0px;
+  border: 0.125px solid #ddd;
+}
+
+.header_text {
+  margin: 0;
+}

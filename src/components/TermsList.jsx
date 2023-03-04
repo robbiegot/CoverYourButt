@@ -15,10 +15,7 @@ function TableEntry({ term, removeTerm }) {
   };
 
   return (
-    <tr
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
+    <tr onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       <td className={`${styles.terms_cell} ${styles.td_left}`}>{term}</td>
       <td className={`${styles.terms_cell} ${styles.td_right}`}>
         <span
@@ -37,22 +34,24 @@ function TableEntry({ term, removeTerm }) {
 
 export default function TermsList({ termsList, removeTerm }) {
   return (
-    <table id={styles.terms_list}>
-      <colgroup>
-        <col width="90%" />
-        <col width="10%" />
-      </colgroup>
-      <tbody>
-        {Array.from(termsList).map((term) => {
-          return (
-            <TableEntry
-              key={crypto.randomUUID()}
-              term={term}
-              removeTerm={removeTerm}
-            />
-          );
-        })}
-      </tbody>
-    </table>
+    <div id={styles.table_container}>
+      <table id={styles.terms_list}>
+        <colgroup>
+          <col width="85%" />
+          <col width="15%" />
+        </colgroup>
+        <tbody>
+          {Array.from(termsList).map((term) => {
+            return (
+              <TableEntry
+                key={crypto.randomUUID()}
+                term={term}
+                removeTerm={removeTerm}
+              />
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 }

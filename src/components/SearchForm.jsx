@@ -11,7 +11,7 @@ export default function SearchForm({ addTerm }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form id={styles.form} onSubmit={handleSubmit}>
       <input
         id={styles.input_text}
         type="text"

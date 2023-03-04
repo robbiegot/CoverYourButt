@@ -9,6 +9,7 @@ import {
   saveTermsList
 } from '../actions';
 import Card from './Card';
+import CardHeader from './CardHeader';
 import SearchForm from './SearchForm';
 import TermsList from './TermsList';
 import TitleBar from './TitleBar';
@@ -82,6 +83,7 @@ export default function App() {
           </section>
         </Card>
         <Card>
+          <CardHeader text={"Blocklist"} />
           <section className={styles.spacer}>
             <SearchForm addTerm={addTerm} />
           </section>
