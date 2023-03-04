@@ -25,7 +25,14 @@
   background: #ddd;
   z-index: 4;
   border: solid 0.125px #ccc;
+}
+
+#pill.transition {
   transition: background-color 400ms ease-in;
+}
+
+#pill.toggled {
+  background-color: #6fbf73;
 }
 
 #peach {
@@ -41,47 +48,38 @@
           calc(min(var(--pill-height), var(--pill-width)))
       )
   );
+  cursor: grab;
+}
+
+#peach:active {
+  cursor: grabbing;
+}
+
+@keyframes wiggle {
+  0% { scale: 1; }
+  35% { scale: 1.2; }
+  45% { transform: rotate(-10deg); }
+  70% { transform: rotate(3deg); }
+}
+
+#peach.untoggled {
+  animation: wiggle 800ms ease 200ms 1 normal;
 }
 
 #circle {
   position: absolute;
   height: var(--circle-size);
   width: var(--circle-size);
-  box-shadow: -1px -1px 4px 2px rgba(0, 0, 0, 0.1) inset;
-  background-color: #fff;
-  border-radius: 100%;
-  border: solid black 2px;
   margin-left: calc(
     -1 * calc(calc(var(--pill-width)) -
           calc(min(var(--pill-height), var(--pill-width))))
   );
-  transition: margin-left 400ms;
-  cursor: pointer;
   z-index: 6;
   border: solid 0.125px #ddd;
-}
-
-#pill.toggled {
-  background-color: #6fbf73;
-}
-
-@keyframes wiggle {
-  0% {
-    scale: 1;
-  }
-  35% {
-    scale: 1.2;
-  }
-  45% {
-    transform: rotate(-10deg);
-  }
-  70% {
-    transform: rotate(3deg);
-  }
-}
-
-#peach.untoggled {
-  animation: wiggle 800ms ease 200ms 1 normal;
+  border-radius: calc(var(--circle-size) / 2);
+  box-shadow: -1px -1px 4px 3px rgba(0, 0, 0, 0.1) inset;
+  background-color: #fff;
+  cursor: pointer;
 }
 
 #circle.toggled {
@@ -92,4 +90,8 @@
           calc(min(var(--pill-height), var(--pill-width)))
       )
   ) !important;
+}
+
+#circle.transition {
+  transition: margin-left 400ms;
 }

@@ -28,14 +28,14 @@ export default function App() {
   useEffect(() => {
     if (covered) {
       saveAndDeleteHistoryItems();
-      circleRef.current.classList.add(toggleStyles.toggled);
       pillRef.current.classList.add(toggleStyles.toggled);
       peachRef.current.classList.remove(toggleStyles.untoggled);
+      circleRef.current.classList.add(toggleStyles.toggled);
     } else {
       restoreHistoryItems();
-      circleRef.current.classList.remove(toggleStyles.toggled);
       pillRef.current.classList.remove(toggleStyles.toggled);
       peachRef.current.classList.add(toggleStyles.untoggled);
+      circleRef.current.classList.remove(toggleStyles.toggled);
     }
     saveCovered(covered);
   }, [covered]);
