@@ -7,7 +7,6 @@
 }
 
 .terms_cell {
-  /* vertical-align: middle; */
   display: inline-flex;
   align-items: center;
   width: 100%;
@@ -39,5 +38,5 @@
 }
 
 .hover_scale {
-  scale: 1.5;
+  scale: 1.25;
 }

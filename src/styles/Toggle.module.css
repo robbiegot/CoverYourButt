@@ -27,15 +27,15 @@
   height: var(--pill-height);
   width: var(--pill-width);
   border-radius: calc(min(var(--pill-height), var(--pill-width)) / 2);
-  box-shadow: 0px 2px 4px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 0px 4px 2px rgba(0, 0, 0, 0.05) inset;
   background: #ddd;
   z-index: 4;
   border: solid 0.125px #ccc;
-  transition: background-color 600ms ease-in;
+  transition: background-color 500ms ease-in;
 }
 
 #peach {
-  filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.3));
   position: absolute;
   height: var(--pill-height);
   padding: 4px;
@@ -53,7 +53,7 @@
   position: absolute;
   height: var(--circle-size);
   width: var(--circle-size);
-  box-shadow: -2px -2px 4px 2px rgba(0, 0, 0, 0.1) inset;
+  box-shadow: -1px -1px 4px 2px rgba(0, 0, 0, 0.1) inset;
   background-color: #fff;
   border-radius: 100%;
   border: solid black 2px;
@@ -61,10 +61,10 @@
     -1 * calc(calc(var(--pill-width)) -
           calc(min(var(--pill-height), var(--pill-width))))
   );
-  transition: margin-left 500ms;
+  transition: margin-left 400ms;
   cursor: pointer;
   z-index: 6;
-  border: solid 0.125px #ccc;
+  border: solid 0.125px #ddd;
 }
 
 #pill.toggled {

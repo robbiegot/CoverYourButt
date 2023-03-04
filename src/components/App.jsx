@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import {
   loadCovered,
@@ -24,33 +24,34 @@ export default function App() {
   const pillRef = useRef(null);
   const circleRef = useRef(null);
 
-  const toggleCovered = () => {
+  useEffect(() => {
     if (covered) {
-      restoreHistoryItems();
-      circleRef.current.classList.remove(toggleStyles.toggled);
-      pillRef.current.classList.remove(toggleStyles.toggled);
-    } else {
       saveAndDeleteHistoryItems();
       circleRef.current.classList.add(toggleStyles.toggled);
       pillRef.current.classList.add(toggleStyles.toggled);
+    } else {
+      restoreHistoryItems();
+      circleRef.current.classList.remove(toggleStyles.toggled);
+      pillRef.current.classList.remove(toggleStyles.toggled);
     }
-    saveCovered(!covered);
-    setCovered(() => !covered);
-  };
+    saveCovered(covered);
+  }, [covered]);
+
+  useEffect(() => {
+    saveTermsList(Array.from(termsList));
+  }, [termsList])
 
   const addTerm = (term) => {
     if (termsList.size >= 50) return; // Maximum of 50 terms in list
     const newTermsList = structuredClone(termsList);
     newTermsList.add(term);
     setTermsList(newTermsList);
-    saveTermsList(Array.from(newTermsList));
   };
 
   const removeTerm = (term) => {
     const newTermsList = structuredClone(termsList);
     if (!newTermsList.delete(term)) return;
     setTermsList(newTermsList);
-    saveTermsList(Array.from(newTermsList));
   };
 
   return (
@@ -60,7 +61,8 @@ export default function App() {
       </header>
       <main id={styles.main}>
         <Toggle
-          toggleCovered={toggleCovered}
+          covered={covered}
+          setCovered={setCovered}
           pillRef={pillRef}
           circleRef={circleRef}
         />

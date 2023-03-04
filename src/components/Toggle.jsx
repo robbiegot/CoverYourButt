@@ -1,9 +1,12 @@
 import styles from '../styles/Toggle.module.css';
 
-export default function Toggle({ toggleCovered, circleRef, pillRef }) {
+export default function Toggle({ covered, setCovered, circleRef, pillRef }) {
   return (
     <section id={styles.spacer}>
-      <div id={styles.switch_container} onClick={toggleCovered}>
+      <div 
+        id={styles.switch_container} 
+        onClick={() => setCovered(() => !covered)}
+      >
         <div 
           id={styles.pill} 
           ref={pillRef} 
