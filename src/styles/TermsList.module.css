@@ -1,29 +1,20 @@
 #terms_list {
+  table-layout: fixed;
   width: 100%;
-}
-
-.terms_item {
-  display: flex;
 }
 
 .terms_cell {
-  display: inline-flex;
-  align-items: center;
-  width: 100%;
+  vertical-align: middle;
+  word-break: break-all;
 }
 
 .td_left {
-  display: inline-flex;
-  align-items: center;
-  width: 100%;
-  justify-content: left;
+  text-align: left;
 }
 
 .td_right {
-  display: inline-flex;
-  align-items: center;
-  width: 100%;
-  justify-content: right;
+  /* text-align: right; */
+  text-align: center;
 }
 
 .svg_wrapper {

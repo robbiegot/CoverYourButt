@@ -16,12 +16,11 @@ function TableEntry({ term, removeTerm }) {
 
   return (
     <tr
-      className={styles.terms_item}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <td className={styles.td_left}>{term}</td>
-      <td className={styles.td_right}>
+      <td className={`${styles.terms_cell} ${styles.td_left}`}>{term}</td>
+      <td className={`${styles.terms_cell} ${styles.td_right}`}>
         <span
           className={styles.svg_wrapper}
           ref={spanRef}
@@ -39,6 +38,10 @@ function TableEntry({ term, removeTerm }) {
 export default function TermsList({ termsList, removeTerm }) {
   return (
     <table id={styles.terms_list}>
+      <colgroup>
+        <col width="80%" />
+        <col width="20%" />
+      </colgroup>
       <tbody>
         {Array.from(termsList).map((term) => {
           return (
