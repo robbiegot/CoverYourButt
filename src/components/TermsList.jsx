@@ -39,8 +39,8 @@ export default function TermsList({ termsList, removeTerm }) {
   return (
     <table id={styles.terms_list}>
       <colgroup>
-        <col width="80%" />
-        <col width="20%" />
+        <col width="90%" />
+        <col width="10%" />
       </colgroup>
       <tbody>
         {Array.from(termsList).map((term) => {

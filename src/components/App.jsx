@@ -8,6 +8,7 @@ import {
   saveCovered,
   saveTermsList
 } from '../actions';
+import Card from './Card';
 import SearchForm from './SearchForm';
 import TermsList from './TermsList';
 import TitleBar from './TitleBar';
@@ -63,35 +64,39 @@ export default function App() {
         <TitleBar />
       </header>
       <main id={styles.main}>
-        <section className={styles.spacer}>
-          <Toggle
-            covered={covered}
-            setCovered={setCovered}
-            pillRef={pillRef}
-            peachRef={peachRef}
-            circleRef={circleRef}
-          />
-        </section>
-        <section className={styles.spacer}>
-          <p>
-            Your butt is
-            <strong>{covered ? ' COVERED' : ' SHOWING'}</strong>
-          </p>
-        </section>
-        <section className={styles.spacer}>
-          <SearchForm addTerm={addTerm} />
-        </section>
-        <div
-          id="expand"
-          onClick={() => {
-            setShowList(() => !showList);
-          }}
-        >
-          {!showList ? 'Expand' : 'Collapse'}
-        </div>
-        {showList && (
-          <TermsList termsList={termsList} removeTerm={removeTerm} />
-        )}
+        <Card>
+          <section className={styles.spacer}>
+            <Toggle
+              covered={covered}
+              setCovered={setCovered}
+              pillRef={pillRef}
+              peachRef={peachRef}
+              circleRef={circleRef}
+            />
+          </section>
+          <section className={styles.spacer}>
+            <p>
+              Your butt is
+              <strong>{covered ? ' COVERED' : ' SHOWING'}</strong>
+            </p>
+          </section>
+        </Card>
+        <Card>
+          <section className={styles.spacer}>
+            <SearchForm addTerm={addTerm} />
+          </section>
+          <div
+            id="expand"
+            onClick={() => {
+              setShowList(() => !showList);
+            }}
+          >
+            {!showList ? 'Expand' : 'Collapse'}
+          </div>
+          {showList && (
+            <TermsList termsList={termsList} removeTerm={removeTerm} />
+          )}
+        </Card>
       </main>
     </>
   );
