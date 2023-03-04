@@ -10,12 +10,6 @@
   -webkit-box-sizing: border-box;
 }
 
-#spacer {
-  width: 100%;
-  display: grid;
-  place-items: center;
-}
-
 #switch_container {
   height: var(--circle-size);
   width: var(--pill-width);
@@ -78,7 +72,7 @@
   35% {
     scale: 1.2;
   }
-  50% {
+  45% {
     transform: rotate(-10deg);
   }
   70% {

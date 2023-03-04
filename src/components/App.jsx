@@ -42,7 +42,7 @@ export default function App() {
 
   useEffect(() => {
     saveTermsList(Array.from(termsList));
-  }, [termsList])
+  }, [termsList]);
 
   const addTerm = (term) => {
     if (termsList.size >= 50) return; // Maximum of 50 terms in list
@@ -63,18 +63,24 @@ export default function App() {
         <TitleBar />
       </header>
       <main id={styles.main}>
-        <Toggle
-          covered={covered}
-          setCovered={setCovered}
-          pillRef={pillRef}
-          peachRef={peachRef}
-          circleRef={circleRef}
-        />
-        <h3>
-          Your butt is
-          {covered ? ' COVERED' : ' SHOWING'}
-        </h3>
-        <SearchForm addTerm={addTerm} />
+        <section className={styles.spacer}>
+          <Toggle
+            covered={covered}
+            setCovered={setCovered}
+            pillRef={pillRef}
+            peachRef={peachRef}
+            circleRef={circleRef}
+          />
+        </section>
+        <section className={styles.spacer}>
+          <p>
+            Your butt is
+            <strong>{covered ? ' COVERED' : ' SHOWING'}</strong>
+          </p>
+        </section>
+        <section className={styles.spacer}>
+          <SearchForm addTerm={addTerm} />
+        </section>
         <div
           id="expand"
           onClick={() => {

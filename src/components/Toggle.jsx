@@ -2,7 +2,7 @@ import styles from '../styles/Toggle.module.css';
 
 export default function Toggle({ covered, setCovered, pillRef, peachRef, circleRef }) {
   return (
-    <section id={styles.spacer}>
+
       <div 
         id={styles.switch_container} 
         onClick={() => setCovered(() => !covered)}
@@ -24,6 +24,5 @@ export default function Toggle({ covered, setCovered, pillRef, peachRef, circleR
           className={styles.border_box}
         ></div>
       </div>
-    </section>
   );
 }
