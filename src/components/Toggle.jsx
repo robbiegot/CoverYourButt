@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 import styles from '../styles/Toggle.module.css';
 
@@ -9,10 +9,18 @@ export default function Toggle({
   peachRef,
   circleRef
 }) {
+  const [initialRender, setInitialRender] = useState(true);
+
   useEffect(() => {
+    if (initialRender) return;
     pillRef.current.classList.add(styles.transition);
     circleRef.current.classList.add(styles.transition);
-  }, []);
+  }, [covered]);
+
+  useEffect(() => {
+    if (!initialRender) return;
+    setInitialRender(() => false)
+  })
 
   return (
     <div id={styles.switch_container}>

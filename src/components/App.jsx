@@ -41,11 +41,12 @@ export default function App() {
     }
     saveCovered(covered);
   }, [covered]);
-
+  
   useEffect(() => {
     saveTermsList(Array.from(termsList));
   }, [termsList]);
 
+  
   const addTerm = (term) => {
     if (termsList.size >= 50) return; // Maximum of 50 terms in list
     const newTermsList = structuredClone(termsList);
