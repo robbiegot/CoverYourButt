@@ -1,0 +1,9 @@
+#main {
+  padding: 12px;
+}
+
+.spacer {
+  width: 100%;
+  display: grid;
+  place-items: center;
+}

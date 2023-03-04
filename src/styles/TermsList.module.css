@@ -1,0 +1,39 @@
+#table_container {
+  display: block;
+  max-height: 200px;
+  overflow-y: scroll;
+}
+
+#terms_list {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.terms_cell {
+  vertical-align: middle;
+  word-break: break-all;
+}
+
+.td_left {
+  text-align: left;
+}
+
+.td_right {
+  /* text-align: right; */
+  text-align: center;
+}
+
+.svg_wrapper {
+  opacity: 0;
+  scale: 1;
+  transition: opacity 0.5s ease-in, scale 0.3s ease-out;
+  cursor: pointer;
+}
+
+.hover_opaque {
+  opacity: 1;
+}
+
+.hover_scale {
+  scale: 1.25;
+}

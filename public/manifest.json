@@ -1,0 +1,13 @@
+{
+  "name": "Cover Your Butt",
+  "version": "1.0",
+  "description": "Temporarily Deletes Embarrassing History Items from your History so they don't show up during presentations",
+  "permissions": [
+    "history"
+  ],
+  "action": {
+    "default_popup": "index.html",
+    "default_icon": "./icon.png"
+  },
+  "manifest_version": 3
+}
