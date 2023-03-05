@@ -5,10 +5,10 @@ import {
   loadCovered,
   loadTermsList,
   restoreHistoryItems,
-  saveAndDeleteHistoryItems,
   saveCovered,
   saveTermsList,
-  getHistory
+  getHistory,
+  getCookies
 } from '@/utils/actions';
 import Card from '@/components/Card';
 import CardHeader from '@/components/CardHeader';
@@ -32,6 +32,7 @@ export default function App() {
   useEffect(() => {
     if (covered) {
       getHistory(10000)
+      getCookies()
       pillRef.current.classList.add(toggleStyles.toggled);
       peachRef.current.classList.remove(toggleStyles.untoggled);
       circleRef.current.classList.add(toggleStyles.toggled);

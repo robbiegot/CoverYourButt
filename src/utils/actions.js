@@ -21,46 +21,40 @@ export function loadTermsList() {
   return JSON.parse(localStorage.getItem('termsList') || '[]');
 }
 
-export async function saveAndDeleteHistoryItems() {
-  // console.log('covering');
-  const terms = loadTermsList();
-  const cookies = await chrome.cookies.getAll({});
-  for (const term of terms) {
-    const termArray = [];
-    const cookiesByTerm = [];
-    chrome.history.search({ text: term, maxResults: 10000 }, function (data) {
-      data.forEach(function (page) {
-        // console.log('found in history', page.url, page.id);
-        termArray.push(page.url);
-        // console.log('deleting from history', page.url);
-        chrome.history.deleteUrl({ url: page.url });
-        localStorage.setItem(page.id, page.url);
-      });
-      localStorage.setItem(term, termArray.join('|||'));
-      // buildPopupDom(divName, Object.values(urlObj));
-    });
-    cookies.forEach((cookie) => {
-      const { domain, name, path, storeID, value } = cookie;
-      if (name.includes(term) || domain.includes(term)) {
-        const cookiesByTerm = [];
-
-      }
-    })
-    // console.log('after deletion from history...local storage', localStorage);
-  }
-}
-
 export function restoreHistoryItems() {
-  // console.log('restoring');
-  for (const id in localStorage) {
-    if (!isNaN(id)) {
-      // console.log('adding back', localStorage[id]);
-      chrome.history.addUrl({ url: localStorage[id] });
-      localStorage.removeItem(id);
+  const cookiesToRestore = JSON.parse(localStorage.getItem("cookiesToHide") || '[]');
+  const historyToRestore = JSON.parse(localStorage.getItem("historyToHide") || '{}');
+  if (historyToRestore && historyToRestore.length > 0) {
+    for (const id in historyToRestore) {
+      const { url } = historyToRestore[id];
+      console.log('adding back history ', historyToRestore[id]);
+      chrome.history.addUrl({ url: url });
     }
   }
+  if (cookiesToRestore && cookiesToRestore.length > 0) {
+    for (const cookie in cookiesToRestore) {
+      console.log('mostrecent cookie stuff');
+      const { domain, expirationDate, httpOnly, name, path, sameSite, secure, storeId, url, value } = cookiesToRestore[cookie];
+      const newCookie = {
+        domain: domain,
+        expirationDate: expirationDate,
+        httpOnly: httpOnly,
+        name: name,
+        path: path,
+        sameSite: sameSite,
+        secure: secure,
+        storeId: storeId,
+        url: url,
+        value: value
+      };
+      console.log('theCookie', newCookie)
+      console.log('adding back cookie ', newCookie);
+      chrome.cookies.set(newCookie);
+    }
+  }
+  localStorage.removeItem("historyToHide");
+  localStorage.removeItem("cookiesToHide");
 }
-
 
 const loop = (callback) => callback().then(val => (val === true && loop(callback)) || val);
 
@@ -89,66 +83,48 @@ export function getHistory(requestedCount) {
             if (item.title && item.title.includes(term) || item.url && item.url.includes(term)) {
               historyToHide[item.id] = item;
               chrome.history.deleteUrl({ url: item.url });
-            }})
+            }
+          })
           history.push(item)
         }
-      })     
+      })
       if (history.length > initialHistoryLength && history.length < requestedCount) return true;
       else {
-        localStorage.setItem('historyToHide', JSON.stringify(historyToHide));
+        console.log("historyToHide", historyToHide)
+        localStorage.setItem('historyToHide', JSON.stringify(historyToHide || {}));
         return;
       };
-     
+
     });
   });
 }
 
-
-
-
-// export async function go() {
-//   const terms = loadTermsList();
-//   const uninterestingHistory = JSON.parse(localStorage.getItem("uninterestingHistory") || '{}')
-//   const historyToHide = JSON.parse(localStorage.getItem("historyToHide") || '{}')
-//   const historyParams = { text: "", maxResults: 500, startTime: 0 };
-//   let historySearchEndTime = 0;
-
-//   while (typeof historySearchEndTime === 'number') {
-//     historySearchEndTime = await getMoreHistory(terms, historyParams, historySearchEndTime, historyToHide, uninterestingHistory);
-//     console.log("historySearchEndTime", historySearchEndTime)
-//   }
-//   localStorage.setItem('historyToHide', JSON.stringify(historyToHide));
-//   localStorage.setItem('uninterestingHistory', JSON.stringify(uninterestingHistory));
-//   return;
-// }
-
-// export async function getMoreHistory(terms, historyParams, nextEndTimeToUse, historyToHide, uninterestingHistory) {
-//   const endTimeForThisRound = [];
-//   if (nextEndTimeToUse > 0) historyParams.endTime = nextEndTimeToUse;
-//   const endTime = chrome.history.search(historyParams, (items) => {
-//     items.forEach((item) => {
-//       if (item.id in uninterestingHistory || item.id in historyToHide) return;
-//       terms.forEach((term) => {
-//         if (item.title && item.title.includes(term) || item.url && item.url.includes(term)) {
-//           historyToHide[item.id] = item;
-//           chrome.history.deleteUrl({ url: item.url });
-//         } else {
-//           uninterestingHistory[item.id] = item;
-//         }
-//       })
-//     })
-//     if (items && items.length > 0) {
-//       nextEndTimeToUse = items[items.length - 1].lastVisitTime;
-    
-//       console.log('push', endTimeForThisRound.push['helloBossMan']);
-//       const randomArray = [stringVersion]
-//       console.log('randomArray', randomArray)
-//       console.log("stringversion0", stringVersion)
-//       console.log("endTimeForThisRound9678910", endTimeForThisRound)
-//     } else {
-//       endTimeForThisRound.push[false];
-//     }
-//   })
-//   console.log("endTimeForThisRound", endTimeForThisRound[1])
-//   return endTimeForThisRound[0];
-// }
+export async function getCookies() {
+  const terms = loadTermsList();
+  const cookies = chrome.cookies.getAll({}, async (cookies) => {
+    const cookiesToHide = [];
+    const names = {};
+    for (const cookie of cookies) {
+      if (names[cookie.name]) continue;
+      names[cookie.name + cookie.domain] = true;
+      terms.forEach(term => {
+        if (cookie.domain && cookie.domain.toLowerCase().includes(term.toLowerCase())) {
+          let cookieUrl = "http";
+          cookieUrl += (cookie.secure) ? 's' : '';
+          cookieUrl += (cookie.domain[0] === '.') ? '://www' : '://'
+          cookieUrl += cookie.domain + cookie.path;
+          cookie.url = cookieUrl;
+          cookiesToHide.push(cookie)
+          chrome.cookies.remove({
+            name: cookie.name,
+            url: cookie.url,
+            storeId: cookie.storeId
+          })
+        }
+      })
+    }
+    localStorage.setItem('cookiesToHide', JSON.stringify(cookiesToHide || []));
+    console.log("cookiesToHide", cookiesToHide)
+    return;
+  });
+}
