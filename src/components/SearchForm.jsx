@@ -2,13 +2,14 @@ import { useRef } from 'react';
 
 import styles from '@/styles/SearchForm.module.css';
 
-export default function SearchForm({ addTerm }) {
+export default function SearchForm({ addTerm, tempSetShowList }) {
   const inputRef = useRef();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     addTerm(inputRef.current.value);
-    e.target.reset()
+    e.target.reset();
+    tempSetShowList();
   };
 
   return (

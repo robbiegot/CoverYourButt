@@ -89,7 +89,12 @@ export default function App() {
         <Card>
           <CardHeader text={'Blocklist'} />
           <section className={styles.spacer}>
-            <SearchForm addTerm={addTerm} />
+            <SearchForm addTerm={addTerm} tempSetShowList={() => {
+              if (showList === false) {
+                setShowList(true);
+                setTimeout(() => setShowList(false), 3000)
+              }
+            }} />
           </section>
           <div
             id="expand"
