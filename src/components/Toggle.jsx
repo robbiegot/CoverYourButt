@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import peachUrl from '@/assets/peach.png';
 import styles from '@/styles/Toggle.module.css';
+import peachUrl from '@/assets/peach.png';
 
 export default function Toggle({
   covered,
