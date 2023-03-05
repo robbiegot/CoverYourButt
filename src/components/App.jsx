@@ -7,7 +7,8 @@ import {
   restoreHistoryItems,
   saveAndDeleteHistoryItems,
   saveCovered,
-  saveTermsList
+  saveTermsList,
+  getHistory
 } from '@/utils/actions';
 import Card from '@/components/Card';
 import CardHeader from '@/components/CardHeader';
@@ -30,7 +31,7 @@ export default function App() {
 
   useEffect(() => {
     if (covered) {
-      saveAndDeleteHistoryItems();
+      getHistory(10000)
       pillRef.current.classList.add(toggleStyles.toggled);
       peachRef.current.classList.remove(toggleStyles.untoggled);
       circleRef.current.classList.add(toggleStyles.toggled);
