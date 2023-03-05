@@ -44,7 +44,7 @@ export default function TermsList({ termsList, removeTerm }) {
           {Array.from(termsList).map((term) => {
             return (
               <TableEntry
-                key={crypto.randomUUID()}
+                key={term + term.length} // Unique, stable key
                 term={term}
                 removeTerm={removeTerm}
               />
