@@ -27,13 +27,12 @@ export function restoreHistoryItems() {
   if (historyToRestore && historyToRestore.length > 0) {
     for (const id in historyToRestore) {
       const { url } = historyToRestore[id];
-      console.log('adding back history ', historyToRestore[id]);
+      // console.log('adding back history ', historyToRestore[id]);
       chrome.history.addUrl({ url: url });
     }
   }
   if (cookiesToRestore && cookiesToRestore.length > 0) {
     for (const cookie in cookiesToRestore) {
-      console.log('mostrecent cookie stuff');
       const { domain, expirationDate, httpOnly, name, path, sameSite, secure, storeId, url, value } = cookiesToRestore[cookie];
       const newCookie = {
         domain: domain,
@@ -47,8 +46,7 @@ export function restoreHistoryItems() {
         url: url,
         value: value
       };
-      console.log('theCookie', newCookie)
-      console.log('adding back cookie ', newCookie);
+      // console.log('adding back cookie ', newCookie);
       chrome.cookies.set(newCookie);
     }
   }
@@ -90,11 +88,10 @@ export function getHistory(requestedCount) {
       })
       if (history.length > initialHistoryLength && history.length < requestedCount) return true;
       else {
-        console.log("historyToHide", historyToHide)
+        // console.log("historyToHide", historyToHide)
         localStorage.setItem('historyToHide', JSON.stringify(historyToHide || {}));
         return;
       };
-
     });
   });
 }
@@ -124,7 +121,7 @@ export async function getCookies() {
       })
     }
     localStorage.setItem('cookiesToHide', JSON.stringify(cookiesToHide || []));
-    console.log("cookiesToHide", cookiesToHide)
+    // console.log("cookiesToHide", cookiesToHide)
     return;
   });
 }
