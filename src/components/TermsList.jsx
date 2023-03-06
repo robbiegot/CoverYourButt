@@ -50,7 +50,6 @@ function ListEntry({ term, removeTerm }) {
 function HitCounters({ iconStyle }) {
   return (
     <>
-      <span style={{ width: '6px' }} />
       <IconContext.Provider value={iconStyle}>
         <BiHistory />
       </IconContext.Provider>
