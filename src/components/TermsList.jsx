@@ -27,7 +27,7 @@ function ListEntry({ term, removeTerm }) {
       <div className={styles.term_container}>
         <p className={styles.term_name}>{term}</p>
         <div className={styles.term_counters}>
-          <HitCounters iconStyle={iconStyle} style={{color: 'red'}} />
+          <HitCounters iconStyle={iconStyle} style={{ color: 'red' }} />
         </div>
       </div>
       <div>
@@ -63,9 +63,9 @@ function HitCounters({ iconStyle }) {
   );
 }
 
-export default function TermsList({ termsList, removeTerm }) {
+export default function TermsList({ listRef, termsList, removeTerm }) {
   return (
-    <div id={styles.list_container}>
+    <div id={styles.list_container} ref={listRef} >
       {Array.from(termsList).map((term) => {
         return <ListEntry key={term} term={term} removeTerm={removeTerm} />;
       })}

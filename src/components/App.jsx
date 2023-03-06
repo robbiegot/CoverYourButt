@@ -20,6 +20,7 @@ import {
 
 import styles from '@/styles/App.module.css';
 import toggleStyles from '@/styles/Toggle.module.css';
+import listStyles from '@/styles/TermsList.module.css';
 
 export default function App() {
   const initialRender = useRef(true);
@@ -30,6 +31,7 @@ export default function App() {
   const pillRef = useRef(null);
   const peachRef = useRef(null);
   const circleRef = useRef(null);
+  const listRef = useRef(null);
 
   useEffect(() => {
     if (covered) {
@@ -115,16 +117,29 @@ export default function App() {
             />
           </section>
           <div
-            id="expand"
+            id="expand_text"
             style={{ textAlign: 'center', cursor: 'pointer' }}
             onClick={() => {
-              setShowList(() => !showList);
+              if (showList) {
+                setTimeout(() => setShowList(() => false), 700);
+                listRef.current.classList.remove(listStyles.expanded)
+                listRef.current.classList.add(listStyles.collapsed)
+              }
+              else {
+                setShowList(() => true);
+                listRef.current.classList.remove(listStyles.collapsed)
+                listRef.current.classList.add(listStyles.expanded)
+              }
             }}
           >
             {!showList ? 'Expand' : 'Collapse'}
           </div>
           {showList && (
-            <TermsList termsList={termsList} removeTerm={removeTerm} />
+            <TermsList
+              listRef={listRef}
+              termsList={termsList}
+              removeTerm={removeTerm}
+            />
           )}
         </Card>
       </main>
