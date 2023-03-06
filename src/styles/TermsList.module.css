@@ -1,26 +1,12 @@
-#table_container {
+#list_container {
   display: block;
-  max-height: 200px;
+  max-height: 0px;
+  transition: max-height 500ms;
   overflow-y: scroll;
 }
 
-#terms_list {
-  table-layout: fixed;
-  width: 100%;
-}
-
-.terms_cell {
-  vertical-align: middle;
-  word-break: break-all;
-}
-
-.td_left {
-  text-align: left;
-}
-
-.td_right {
-  /* text-align: right; */
-  text-align: center;
+.expanded {
+  max-height: 200px;
 }
 
 .svg_wrapper {
@@ -36,4 +22,33 @@
 
 .hover_scale {
   scale: 1.25;
+}
+
+.row {
+  width: 100%;
+  display: flex;
+  flex: 1 0;
+  justify-content: space-between;
+  align-items: center;
+  cursor: default;
+}
+
+.term_container {
+  width: 100%;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+
+.term_name {
+  /* flex: 1; */
+  width: calc(fit-content - 30px);
+  word-break: break-word;
+}
+
+.term_counters {
+  /* flex: auto; */
+  width: fit-content;
+  display: flex;
+  align-items: center;
 }

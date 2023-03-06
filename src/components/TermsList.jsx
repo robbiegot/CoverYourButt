@@ -1,9 +1,11 @@
 import { useRef } from 'react';
+import { IconContext } from 'react-icons';
 import { FiTrash2 } from 'react-icons/fi';
+import { BiCookie, BiHistory } from 'react-icons/bi';
 
 import styles from '@/styles/TermsList.module.css';
 
-function TableEntry({ term, removeTerm }) {
+function ListEntry({ term, removeTerm }) {
   const spanRef = useRef(null);
 
   const handleMouseEnter = () => {
@@ -15,9 +17,18 @@ function TableEntry({ term, removeTerm }) {
   };
 
   return (
-    <tr onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-      <td className={`${styles.terms_cell} ${styles.td_left}`}>{term}</td>
-      <td className={`${styles.terms_cell} ${styles.td_right}`}>
+    <div
+      className={styles.row}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <div className={styles.term_container}>
+        <p className={styles.term_name}>{term}</p>
+        <div className={styles.term_counters}>
+          <HitCounters />
+        </div>
+      </div>
+      <div>
         <span
           className={styles.svg_wrapper}
           ref={spanRef}
@@ -27,31 +38,35 @@ function TableEntry({ term, removeTerm }) {
         >
           <FiTrash2 />
         </span>
-      </td>
-    </tr>
+      </div>
+    </div>
+  );
+}
+
+function HitCounters({}) {
+  const iconStyle = { size: '0.75rem' }
+  return (
+    <>
+      <span style={{ width: '6px' }} />
+      <IconContext.Provider value={iconStyle}>
+        <BiHistory />
+      </IconContext.Provider>
+      3
+      <span style={{ width: '3px' }} />
+      <IconContext.Provider value={iconStyle}>
+        <BiCookie />
+      </IconContext.Provider>
+      2
+    </>
   );
 }
 
 export default function TermsList({ termsList, removeTerm }) {
   return (
-    <div id={styles.table_container}>
-      <table id={styles.terms_list}>
-        <colgroup>
-          <col width="85%" />
-          <col width="15%" />
-        </colgroup>
-        <tbody>
-          {Array.from(termsList).map((term) => {
-            return (
-              <TableEntry
-                key={term + term.length} // Unique, stable key
-                term={term}
-                removeTerm={removeTerm}
-              />
-            );
-          })}
-        </tbody>
-      </table>
+    <div id={styles.list_container}>
+      {Array.from(termsList).map((term) => {
+        return <ListEntry key={term} term={term} removeTerm={removeTerm} />;
+      })}
     </div>
   );
 }
