@@ -46,13 +46,11 @@
 }
 
 .term_name {
-  /* flex: 1; */
   width: calc(fit-content - 30px);
   word-break: break-word;
 }
 
 .term_counters {
-  /* flex: auto; */
   width: fit-content;
   display: flex;
   align-items: center;

@@ -8,6 +8,8 @@ import styles from '@/styles/TermsList.module.css';
 function ListEntry({ term, removeTerm }) {
   const spanRef = useRef(null);
 
+  const iconStyle = { size: '0.75rem' };
+
   const handleMouseEnter = () => {
     spanRef.current.classList.add(styles.hover_opaque, styles.hover_scale);
   };
@@ -25,7 +27,7 @@ function ListEntry({ term, removeTerm }) {
       <div className={styles.term_container}>
         <p className={styles.term_name}>{term}</p>
         <div className={styles.term_counters}>
-          <HitCounters />
+          <HitCounters iconStyle={iconStyle} />
         </div>
       </div>
       <div>
@@ -36,15 +38,16 @@ function ListEntry({ term, removeTerm }) {
             return removeTerm(term);
           }}
         >
-          <FiTrash2 />
+          <IconContext.Provider value={iconStyle}>
+            <FiTrash2 />
+          </IconContext.Provider>
         </span>
       </div>
     </div>
   );
 }
 
-function HitCounters({}) {
-  const iconStyle = { size: '0.75rem' }
+function HitCounters({ iconStyle }) {
   return (
     <>
       <span style={{ width: '6px' }} />
@@ -62,9 +65,8 @@ function HitCounters({}) {
 }
 
 export default function TermsList({ termsList, removeTerm }) {
-
   return (
-    <div id={styles.list_container} >
+    <div id={styles.list_container}>
       {Array.from(termsList).map((term) => {
         return <ListEntry key={term} term={term} removeTerm={removeTerm} />;
       })}
