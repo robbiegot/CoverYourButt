@@ -109,7 +109,7 @@ export default function App() {
               tempSetShowList={() => {
                 if (showList === false) {
                   setShowList(true);
-                  setTimeout(() => setShowList(false), 3000);
+                  setTimeout(() => setShowList(false), 5000);
                 }
               }}
             />

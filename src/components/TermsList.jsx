@@ -1,7 +1,7 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { IconContext } from 'react-icons';
-import { FiTrash2 } from 'react-icons/fi';
 import { BiCookie, BiHistory } from 'react-icons/bi';
+import { FiTrash2 } from 'react-icons/fi';
 
 import styles from '@/styles/TermsList.module.css';
 
@@ -62,8 +62,9 @@ function HitCounters({}) {
 }
 
 export default function TermsList({ termsList, removeTerm }) {
+
   return (
-    <div id={styles.list_container}>
+    <div id={styles.list_container} >
       {Array.from(termsList).map((term) => {
         return <ListEntry key={term} term={term} removeTerm={removeTerm} />;
       })}
