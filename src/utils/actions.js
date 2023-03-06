@@ -1,5 +1,5 @@
 import chromep from 'chrome-promise';
-
+// console.log(">  file: actions.js:2  chromep:", chromep)
 
 export function saveCovered(covered) {
   localStorage.setItem('covered', JSON.stringify(covered ? 1 : 0)); // 'covered' will always be stored as '1' or '0'
@@ -21,42 +21,7 @@ export function loadTermsList() {
   return JSON.parse(localStorage.getItem('termsList') || '[]');
 }
 
-export function restoreHistoryItems() {
-  const cookiesToRestore = JSON.parse(localStorage.getItem("cookiesToHide") || '[]');
-  const historyToRestore = JSON.parse(localStorage.getItem("historyToHide") || '{}');
-  if (historyToRestore && historyToRestore.length > 0) {
-    for (const id in historyToRestore) {
-      const { url } = historyToRestore[id];
-      // console.log('adding back history ', historyToRestore[id]);
-      chrome.history.addUrl({ url: url });
-    }
-  }
-  if (cookiesToRestore && cookiesToRestore.length > 0) {
-    for (const cookie in cookiesToRestore) {
-      const { domain, expirationDate, httpOnly, name, path, sameSite, secure, storeId, url, value } = cookiesToRestore[cookie];
-      const newCookie = {
-        domain: domain,
-        expirationDate: expirationDate,
-        httpOnly: httpOnly,
-        name: name,
-        path: path,
-        sameSite: sameSite,
-        secure: secure,
-        storeId: storeId,
-        url: url,
-        value: value
-      };
-      // console.log('adding back cookie ', newCookie);
-      chrome.cookies.set(newCookie);
-    }
-  }
-  localStorage.removeItem("historyToHide");
-  localStorage.removeItem("cookiesToHide");
-}
-
-const loop = (callback) => callback().then(val => (val === true && loop(callback)) || val);
-
-export function getHistory(requestedCount) {
+export function hideHistoryItems(requestedCount) {
   const ids = {};
   const history = [];
   const terms = loadTermsList();
@@ -89,16 +54,16 @@ export function getHistory(requestedCount) {
       if (history.length > initialHistoryLength && history.length < requestedCount) return true;
       else {
         // console.log("historyToHide", historyToHide)
-        localStorage.setItem('historyToHide', JSON.stringify(historyToHide || {}));
+        localStorage.setItem('hiddenHistoryItems', JSON.stringify(historyToHide || {}));
         return;
       };
     });
   });
 }
 
-export async function getCookies() {
+export async function hideCookies() {
   const terms = loadTermsList();
-  const cookies = chrome.cookies.getAll({}, async (cookies) => {
+  chrome.cookies.getAll({}, async (cookies) => {
     const cookiesToHide = [];
     const names = {};
     for (const cookie of cookies) {
@@ -120,8 +85,32 @@ export async function getCookies() {
         }
       })
     }
-    localStorage.setItem('cookiesToHide', JSON.stringify(cookiesToHide || []));
-    // console.log("cookiesToHide", cookiesToHide)
+    localStorage.setItem('hiddenCookies', JSON.stringify(cookiesToHide || []));
     return;
   });
 }
+
+export function restoreHistoryItems() {
+  const historyToRestore = JSON.parse(localStorage.getItem("hiddenHistoryItems") || '{}');
+  if (Object.keys(historyToRestore)?.length > 0) {
+    for (const id in historyToRestore) {
+      const { url } = historyToRestore[id];
+      chrome.history.addUrl({ url });
+    }
+  }
+  localStorage.removeItem("hiddenHistoryItems");
+}
+
+export function restoreCookies() {
+  const cookiesToRestore = JSON.parse(localStorage.getItem("hiddenCookies") || '[]');
+  if (cookiesToRestore?.length > 0) {
+    for (const cookie in cookiesToRestore) {
+      const { domain, expirationDate, httpOnly, name, path, sameSite, secure, storeId, url, value } = cookiesToRestore[cookie];
+      const newCookie = { domain, expirationDate, httpOnly, name, path, sameSite, secure, storeId, url, value };
+      chrome.cookies.set(newCookie);
+    }
+  }
+  localStorage.removeItem("hiddenCookies");
+}
+
+const loop = (callback) => callback().then(val => (val === true && loop(callback)) || val);

@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
-import peachUrl from '@/assets/peach.png';
 import styles from '@/styles/Toggle.module.css';
 import peachUrl from '@/assets/peach.png';
 
@@ -11,18 +10,16 @@ export default function Toggle({
   peachRef,
   circleRef
 }) {
-  const [initialRender, setInitialRender] = useState(true);
+  const initialRender = useRef(true);
 
   useEffect(() => {
-    if (initialRender) return;
+    if (initialRender.current) {
+      initialRender.current = false;
+      return;
+    }
     pillRef.current.classList.add(styles.transition);
     circleRef.current.classList.add(styles.transition);
-  }, [covered]);
-
-  useEffect(() => {
-    if (!initialRender) return;
-    setInitialRender(() => false);
-  });
+  }, [covered]); // Add transitions after initial render; this prevents the toggle animation when opening the extension
 
   return (
     <div id={styles.switch_container}>
