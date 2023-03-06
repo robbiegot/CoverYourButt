@@ -49,6 +49,7 @@
       )
   );
   cursor: grab;
+  animation: wiggle 800ms ease 200ms 1 normal;
 }
 
 #peach:active {
@@ -62,8 +63,8 @@
   70% { transform: rotate(3deg); }
 }
 
-#peach.untoggled {
-  animation: wiggle 800ms ease 200ms 1 normal;
+#peach.toggled {
+  animation: none;
 }
 
 #circle {

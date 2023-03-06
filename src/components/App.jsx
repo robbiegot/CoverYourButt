@@ -19,7 +19,6 @@ import {
 } from '@/utils/actions';
 
 import styles from '@/styles/App.module.css';
-import toggleStyles from '@/styles/Toggle.module.css';
 import listStyles from '@/styles/TermsList.module.css';
 
 export default function App() {
@@ -34,24 +33,11 @@ export default function App() {
   const listRef = useRef(null);
 
   useEffect(() => {
+    if (initialRender.current) return;
     if (covered) {
-      pillRef.current.classList.add(toggleStyles.toggled);
-      peachRef.current.classList.remove(toggleStyles.untoggled);
-      circleRef.current.classList.add(toggleStyles.toggled);
-      if (initialRender.current) {
-        initialRender.current = false;
-        return;
-      }
       hideHistoryItems(10000);
       hideCookies();
     } else {
-      pillRef.current.classList.remove(toggleStyles.toggled);
-      peachRef.current.classList.add(toggleStyles.untoggled);
-      circleRef.current.classList.remove(toggleStyles.toggled);
-      if (initialRender.current) {
-        initialRender.current = false;
-        return;
-      }
       restoreHistoryItems();
       restoreCookies();
     }
@@ -59,15 +45,16 @@ export default function App() {
   }, [covered]);
 
   useEffect(() => {
-    if (initialRender.current) {
-      initialRender.current = false;
-      return;
-    }
+    if (initialRender.current) return;
     saveTermsList(Array.from(termsList));
   }, [termsList]);
 
+  useEffect(() => {
+    initialRender.current = false;
+  }, []);
+
   const addTerm = (term) => {
-    if (termsList.size >= 50) return; // Maximum of 50 terms in list
+    if (termsList.size >= 50) return; // * Maximum of 50 terms in list
     const newTermsList = structuredClone(termsList);
     newTermsList.add(term);
     setTermsList(newTermsList);
@@ -98,7 +85,7 @@ export default function App() {
           <section className={styles.spacer}>
             <p>
               Your butt is
-              <strong>{covered ? ' COVERED' : ' SHOWING '}</strong>
+              <strong> {covered ? 'COVERED' : 'SHOWING '}</strong>
               {!covered && <FiAlertTriangle />}
             </p>
           </section>

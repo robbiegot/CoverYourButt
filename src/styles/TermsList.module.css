@@ -67,7 +67,7 @@
   width: calc(fit-content - 30px);
   word-break: break-word;
   margin: 0;
-  /* line-height: 200%; */
+  line-height: 150%;
 }
 
 .term_counters {
