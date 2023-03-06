@@ -122,13 +122,10 @@ export default function App() {
             onClick={() => {
               if (showList) {
                 setTimeout(() => setShowList(() => false), 700);
-                listRef.current.classList.remove(listStyles.expanded)
-                listRef.current.classList.add(listStyles.collapsed)
-              }
-              else {
+                listRef.current.classList.remove(listStyles.expanded);
+                listRef.current.classList.add(listStyles.collapsed);
+              } else {
                 setShowList(() => true);
-                listRef.current.classList.remove(listStyles.collapsed)
-                listRef.current.classList.add(listStyles.expanded)
               }
             }}
           >

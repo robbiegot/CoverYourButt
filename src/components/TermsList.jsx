@@ -65,7 +65,7 @@ function HitCounters({ iconStyle }) {
 
 export default function TermsList({ listRef, termsList, removeTerm }) {
   return (
-    <div id={styles.list_container} ref={listRef} >
+    <div id={styles.list_container} className={styles.expanded} ref={listRef} >
       {Array.from(termsList).map((term) => {
         return <ListEntry key={term} term={term} removeTerm={removeTerm} />;
       })}
