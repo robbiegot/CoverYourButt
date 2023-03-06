@@ -5,9 +5,10 @@ import {
   loadCovered,
   loadTermsList,
   restoreHistoryItems,
-  saveAndDeleteHistoryItems,
   saveCovered,
-  saveTermsList
+  saveTermsList,
+  getHistory,
+  getCookies
 } from '@/utils/actions';
 import Card from '@/components/Card';
 import CardHeader from '@/components/CardHeader';
@@ -30,7 +31,8 @@ export default function App() {
 
   useEffect(() => {
     if (covered) {
-      saveAndDeleteHistoryItems();
+      getHistory(10000)
+      getCookies()
       pillRef.current.classList.add(toggleStyles.toggled);
       peachRef.current.classList.remove(toggleStyles.untoggled);
       circleRef.current.classList.add(toggleStyles.toggled);
@@ -87,7 +89,12 @@ export default function App() {
         <Card>
           <CardHeader text={'Blocklist'} />
           <section className={styles.spacer}>
-            <SearchForm addTerm={addTerm} />
+            <SearchForm addTerm={addTerm} tempSetShowList={() => {
+              if (showList === false) {
+                setShowList(true);
+                setTimeout(() => setShowList(false), 3000)
+              }
+            }} />
           </section>
           <div
             id="expand"

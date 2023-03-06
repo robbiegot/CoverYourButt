@@ -2,12 +2,14 @@ import { useRef } from 'react';
 
 import styles from '@/styles/SearchForm.module.css';
 
-export default function SearchForm({ addTerm }) {
+export default function SearchForm({ addTerm, tempSetShowList }) {
   const inputRef = useRef();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     addTerm(inputRef.current.value);
+    e.target.reset();
+    tempSetShowList();
   };
 
   return (
@@ -19,10 +21,10 @@ export default function SearchForm({ addTerm }) {
         autoComplete="off"
         placeholder="Domain name or title"
       />
-      <input 
-        id={styles.input_submit} 
-        type="submit" 
-        value="Add" 
+      <input
+        id={styles.input_submit}
+        type="submit"
+        value="Add"
       />
     </form>
   );
