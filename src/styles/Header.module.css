@@ -1,7 +1,6 @@
 .header_container {
   display: flex;
   flex-direction: row;
-  flex: 1 0 1;
   align-items: center;
   margin-bottom: 12px;
   color: #bbb;

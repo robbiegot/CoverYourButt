@@ -27,7 +27,7 @@ function ListEntry({ term, removeTerm }) {
       <div className={styles.term_container}>
         <p className={styles.term_name}>{term}</p>
         <div className={styles.term_counters}>
-          <HitCounters iconStyle={iconStyle} />
+          <HitCounters iconStyle={iconStyle} style={{color: 'red'}} />
         </div>
       </div>
       <div>
