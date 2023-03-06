@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { IconContext } from 'react-icons';
 import { BiCookie, BiHistory } from 'react-icons/bi';
 import { FiTrash2 } from 'react-icons/fi';
