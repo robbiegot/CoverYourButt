@@ -1,9 +1,13 @@
 @keyframes expand {
   0% {
-    height: 0px;
+    max-height: 0px;
+    opacity: 0;
+  }
+  75% {
+    opacity: 1;
   }
   100% {
-    height: 200px;
+    max-height: 200px;
   }
 }
 
@@ -11,17 +15,13 @@
   display: block;
   max-height: 200px;
   overflow-y: scroll;
-  animation: expand 500ms ease 0ms 1 normal;
-}
-
-#list_container.collapsed {
-  animation: expand 500ms ease 0ms 1 reverse;
+  animation: expand 1000ms ease 0ms 1 normal;
 }
 
 .svg_wrapper {
   opacity: 0;
   scale: 1;
-  transition: opacity 0.5s ease-in, scale 0.3s ease-out;
+  transition: opacity 500ms ease-in, scale 300ms ease-out;
   cursor: pointer;
 }
 
@@ -50,6 +50,7 @@
 }
 
 .term_name {
+  display: inline;
   width: calc(fit-content - 30px);
   word-break: break-word;
 }
