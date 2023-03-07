@@ -18,8 +18,6 @@ function ListEntry({ term, removeTerm, historyItemCount, cookieCount }) {
     spanRef.current.classList.remove(styles.hover_opaque, styles.hover_scale);
   };
 
-  console.log(term, historyItemCount, cookieCount);
-
   return (
     <div className={styles.row} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       <div className={styles.term_container}>

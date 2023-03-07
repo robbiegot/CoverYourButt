@@ -1,5 +1,4 @@
 import chromep from 'chrome-promise';
-// console.log(">  file: actions.js:2  chromep:", chromep)
 
 export function saveCovered(covered) {
   localStorage.setItem('covered', JSON.stringify(covered ? 1 : 0)); // 'covered' will always be stored as '1' or '0'
@@ -43,8 +42,7 @@ export function hideHistoryItems(requestedCount) {
           if (!ids[id] && history.length < requestedCount) {
             ids[id] = true;
             terms.forEach((term) => {
-              if (item?.title?.includes(term) || item?.url?.includes(term)) { // * Term partially match historyItemZ title or url
-                console.log(item.title, item.url, term);
+              if (item?.title?.includes(term) || item?.url?.includes(term)) { // * Term partially matches with history item title and/or url
                 historyToHide[item.id] = item;
                 historyItemCountByTerm[term]++;
                 chrome.history.deleteUrl({ url: item.url });
