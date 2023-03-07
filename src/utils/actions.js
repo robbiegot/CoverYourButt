@@ -24,14 +24,14 @@ export function hideHistoryItems(requestedCount) {
   const history = [];
   const terms = loadTermsList();
   const historyToHide = {};
+  const historyItemCountByTerm = {};
 
   return loop(() => {
     const endTime =
       (history.length && history[history.length - 1].lastVisitTime) ||
       Date.now();
 
-    return chromep.history
-      .search({
+    return chromep.history.search({
         text: '',
         startTime: 0,
         endTime: endTime,
@@ -61,15 +61,24 @@ export function hideHistoryItems(requestedCount) {
         )
           return true;
         else {
-          // console.log("historyToHide", historyToHide)
-          localStorage.setItem(
-            'hiddenHistoryItems',
-            JSON.stringify(historyToHide || {})
-          );
+          localStorage.setItem('hiddenHistoryItems', JSON.stringify(historyToHide || {}));
           return;
         }
       });
   });
+  saveHistoryItemCountByTerm(historyItemCountByTerm);
+}
+
+function saveHistoryItemCountByTerm(historyItemCountByTerm) {
+  return localStorage.setItem('historyItemCountByTerm', JSON.stringify(cookieCountByTerm));
+}
+
+export function loadHistoryItemCountByTerm() {
+  return JSON.parse(localStorage.getItem('historyItemCountByTerm') || '{}');
+}
+
+function clearHistoryItemCountByTerm() {
+  return localStorage.removeItem('historyItemCountByTerm');
 }
 
 export async function hideCookies() {
@@ -90,7 +99,20 @@ export async function hideCookies() {
     chrome.cookies.remove({ name, storeId, url });
   });
   localStorage.setItem('hiddenCookies', JSON.stringify(matchedCookies || []));
-  return countsByTerm;
+  saveCookieCountByTerm(countsByTerm);
+  return;
+}
+
+function saveCookieCountByTerm(cookieCountByTerm) {
+  return localStorage.setItem('cookieCountByTerm', JSON.stringify(cookieCountByTerm));
+}
+
+export function loadCookieCountByTerm() {
+  return JSON.parse(localStorage.getItem('cookieCountByTerm') || '{}');
+}
+
+function clearCookieCountByTerm() {
+  return localStorage.removeItem('cookieCountByTerm');
 }
 
 export function restoreHistoryItems() {
@@ -104,6 +126,7 @@ export function restoreHistoryItems() {
     }
   }
   localStorage.removeItem('hiddenHistoryItems');
+  clearHistoryItemCountByTerm();
 }
 
 export function restoreCookies() {
@@ -140,6 +163,7 @@ export function restoreCookies() {
     }
   }
   localStorage.removeItem('hiddenCookies');
+  clearCookieCountByTerm();
 }
 
 const loop = (callback) =>

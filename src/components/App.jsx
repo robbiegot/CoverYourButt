@@ -10,7 +10,9 @@ import Toggle from '@/components/Toggle';
 import {
   hideCookies,
   hideHistoryItems,
+  loadCookieCountByTerm,
   loadCovered,
+  loadHistoryItemCountByTerm,
   loadTermsList,
   restoreCookies,
   restoreHistoryItems,
@@ -26,6 +28,8 @@ export default function App() {
   const [covered, setCovered] = useState(loadCovered());
   const [showList, setShowList] = useState(false);
   const [termsList, setTermsList] = useState(new Set(loadTermsList()));
+  const [cookieCountByTerm, setCookieCountByTerm] = useState(loadCookieCountByTerm());
+  const [historyItemCountByTerm, setHistoryItemCountByTerm] = useState(loadHistoryItemCountByTerm());
 
   const pillRef = useRef(null);
   const peachRef = useRef(null);
@@ -35,11 +39,17 @@ export default function App() {
   useEffect(() => {
     if (initialRender.current) return;
     if (covered) {
-      hideHistoryItems(10000);
-      hideCookies();
+      hideHistoryItems(10000).then(() => {
+        setHistoryItemCountByTerm(loadHistoryItemCountByTerm());
+      });
+      hideCookies().then(() => {
+        setCookieCountByTerm(loadCookieCountByTerm());
+      });
     } else {
       restoreHistoryItems();
+      setHistoryItemCountByTerm({});
       restoreCookies();
+      setCookieCountByTerm({});
     }
     saveCovered(covered);
   }, [covered]);
@@ -123,6 +133,8 @@ export default function App() {
               listRef={listRef}
               termsList={termsList}
               removeTerm={removeTerm}
+              historyItemCountByTerm={historyItemCountByTerm}
+              cookieCountByTerm={cookieCountByTerm}
             />
           )}
         </Card>

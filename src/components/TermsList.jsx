@@ -5,7 +5,7 @@ import { FiTrash2 } from 'react-icons/fi';
 
 import styles from '@/styles/TermsList.module.css';
 
-function ListEntry({ term, removeTerm }) {
+function ListEntry({ term, removeTerm, historyItemCount, cookieCount }) {
   const spanRef = useRef(null);
 
   const iconStyle = { size: '0.75rem' };
@@ -27,7 +27,22 @@ function ListEntry({ term, removeTerm }) {
       <div className={styles.term_container}>
         <p className={styles.term_name}>{term}</p>
         <div className={styles.term_counters}>
-          <HitCounters iconStyle={iconStyle} style={{ color: 'red' }} />
+          {typeof historyItemCount === 'number' && (
+            <>
+              <IconContext.Provider value={iconStyle}>
+                <BiHistory />
+              </IconContext.Provider>
+              {historyItemCount || 0}
+            </>
+          )}
+          {typeof cookieCount === 'number' && (
+            <>
+              <IconContext.Provider value={iconStyle}>
+                <BiCookie />
+              </IconContext.Provider>
+              {cookieCount || 0}
+            </>
+          )}
         </div>
       </div>
       <div>
@@ -47,27 +62,24 @@ function ListEntry({ term, removeTerm }) {
   );
 }
 
-function HitCounters({ iconStyle }) {
+export default function TermsList({
+  listRef,
+  termsList,
+  removeTerm,
+  cookieCountByTerm,
+}) {
   return (
-    <>
-      <IconContext.Provider value={iconStyle}>
-        <BiHistory />
-      </IconContext.Provider>
-      3
-      <span style={{ width: '3px' }} />
-      <IconContext.Provider value={iconStyle}>
-        <BiCookie />
-      </IconContext.Provider>
-      2
-    </>
-  );
-}
-
-export default function TermsList({ listRef, termsList, removeTerm }) {
-  return (
-    <div id={styles.list_container} className={styles.expanded} ref={listRef} >
+    <div id={styles.list_container} className={styles.expanded} ref={listRef}>
       {Array.from(termsList).map((term) => {
-        return <ListEntry key={term} term={term} removeTerm={removeTerm} />;
+        return (
+          <ListEntry
+            key={term}
+            term={term}
+            removeTerm={removeTerm}
+            historyItemCount={0}
+            cookieCount={cookieCountByTerm[term]}
+          />
+        );
       })}
     </div>
   );
