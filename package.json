@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Boblobblieb/CoverYourButt.git"
+    "url": "git+https://github.com/robbiegot/CoverYourButt.git"
   },
   "keywords": [],
   "author": "",
@@ -23,6 +23,7 @@
     "vite": "^4.1.4"
   },
   "dependencies": {
+    "@mui/icons-material": "^5.11.11",
     "@vitejs/plugin-react": "^3.1.0",
     "chrome-promise": "^3.0.5",
     "react": "^18.2.0",

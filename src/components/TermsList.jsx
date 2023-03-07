@@ -1,10 +1,14 @@
 import { useRef } from 'react';
+import { IconContext } from 'react-icons';
+import { BiCookie, BiHistory } from 'react-icons/bi';
 import { FiTrash2 } from 'react-icons/fi';
 
 import styles from '@/styles/TermsList.module.css';
 
-function TableEntry({ term, removeTerm }) {
+function ListEntry({ term, removeTerm, historyItemCount, cookieCount }) {
   const spanRef = useRef(null);
+
+  const iconStyle = { size: '0.75rem' };
 
   const handleMouseEnter = () => {
     spanRef.current.classList.add(styles.hover_opaque, styles.hover_scale);
@@ -15,9 +19,29 @@ function TableEntry({ term, removeTerm }) {
   };
 
   return (
-    <tr onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-      <td className={`${styles.terms_cell} ${styles.td_left}`}>{term}</td>
-      <td className={`${styles.terms_cell} ${styles.td_right}`}>
+    <div className={styles.row} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+      <div className={styles.term_container}>
+        <p className={styles.term_name}>{term}</p>
+        <div className={styles.term_counters}>
+          {typeof historyItemCount === 'number' && (
+            <>
+              <IconContext.Provider value={iconStyle}>
+                <BiHistory />
+              </IconContext.Provider>
+              {historyItemCount}
+            </>
+          )}
+          {typeof cookieCount === 'number' && (
+            <>
+              <IconContext.Provider value={iconStyle}>
+                <BiCookie />
+              </IconContext.Provider>
+              {cookieCount}
+            </>
+          )}
+        </div>
+      </div>
+      <div>
         <span
           className={styles.svg_wrapper}
           ref={spanRef}
@@ -25,33 +49,29 @@ function TableEntry({ term, removeTerm }) {
             return removeTerm(term);
           }}
         >
-          <FiTrash2 />
+          <IconContext.Provider value={iconStyle}>
+            <FiTrash2 />
+          </IconContext.Provider>
         </span>
-      </td>
-    </tr>
+      </div>
+    </div>
   );
 }
 
-export default function TermsList({ termsList, removeTerm }) {
+export default function TermsList({ listRef, termsList, removeTerm, historyItemCountByTerm, cookieCountByTerm }) {
   return (
-    <div id={styles.table_container}>
-      <table id={styles.terms_list}>
-        <colgroup>
-          <col width="85%" />
-          <col width="15%" />
-        </colgroup>
-        <tbody>
-          {Array.from(termsList).map((term) => {
-            return (
-              <TableEntry
-                key={crypto.randomUUID()}
-                term={term}
-                removeTerm={removeTerm}
-              />
-            );
-          })}
-        </tbody>
-      </table>
+    <div id={styles.list_container} className={styles.expanded} ref={listRef}>
+      {Array.from(termsList).map((term) => {
+        return (
+          <ListEntry
+            key={term}
+            term={term}
+            removeTerm={removeTerm}
+            historyItemCount={historyItemCountByTerm[term]}
+            cookieCount={cookieCountByTerm[term]}
+          />
+        );
+      })}
     </div>
   );
 }
