@@ -53,10 +53,20 @@ export default function App() {
     }
     saveCovered(covered);
   }, [covered]);
-
+  
   useEffect(() => {
     if (initialRender.current) return;
     saveTermsList(Array.from(termsList));
+    if (covered) {
+      restoreHistoryItems();
+      restoreCookies();
+      hideHistoryItems(10000).then(() => {
+        setHistoryItemCountByTerm(loadHistoryItemCountByTerm()); // ! Temporarily displays 0
+      });
+      hideCookies().then(() => {
+        setCookieCountByTerm(loadCookieCountByTerm());
+      });
+    }
   }, [termsList]);
 
   useEffect(() => {
