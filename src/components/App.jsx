@@ -89,8 +89,10 @@ export default function App() {
 
   return (
     <>
-      <header>
-        <TitleBar>Cover Your Butt</TitleBar>
+      <header id={styles.header}>
+        <TitleBar>
+          <h1>Cover Your Butt</h1>
+        </TitleBar>
       </header>
       <main id={styles.main}>
         <Card>
@@ -150,7 +152,7 @@ export default function App() {
           )}
         </Card>
       </main>
-      <footer>
+      <footer id={styles.footer}>
         <ToolBar />
       </footer>
     </>

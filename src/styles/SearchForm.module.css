@@ -1,13 +1,20 @@
 #form {
-  margin-bottom: 12px;
+  margin-bottom: 0.75rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  flex-flow: wrap;
 }
 
 #input_text {
+  flex: auto;
+  height: 1.5rem;
   box-sizing: border-box;
   border: 0.5px solid #aaa;
-  border-radius: 4px;
-  padding: 4px 6px;
-  min-height: 26px;
+  border-radius: 0.25rem;
+  padding: 0 0.5rem;
+  font-size: 0.75rem;
 }
 
 #input_text:focus {
@@ -15,7 +22,9 @@
 }
 
 #input_submit {
+  flex: auto;
+  height: 1.5rem;
   border: 0.5px solid #aaa;
-  border-radius: 4px;
-  min-height: 26px;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
 }
