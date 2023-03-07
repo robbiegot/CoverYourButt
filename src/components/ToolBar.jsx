@@ -1,9 +1,11 @@
-import styles from '@/styles/ToolBar.module.css'
+import styles from '@/styles/ToolBar.module.css';
 
-export default function Footer() {
-  return(
+export default function Footer({ children }) {
+  return (
     <div id={styles.footer_banner}>
-      <h2 id={styles.title_text}>Footer</h2>
+      <span id={styles.footer_content}>
+        {children}
+      </span>
     </div>
-  )
-};
+  );
+}

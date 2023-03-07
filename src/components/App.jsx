@@ -131,7 +131,7 @@ export default function App() {
             style={{ textAlign: 'center', cursor: 'pointer' }}
             onClick={() => {
               if (showList) {
-                setTimeout(() => setShowList(() => false), 700);
+                setTimeout(() => setShowList(false), 600); // ! Flashes if set to 700ms
                 listRef.current.classList.remove(listStyles.expanded);
                 listRef.current.classList.add(listStyles.collapsed);
               } else {
@@ -153,7 +153,9 @@ export default function App() {
         </Card>
       </main>
       <footer id={styles.footer}>
-        <ToolBar />
+        <ToolBar>
+          {/* <h3>Footer Components</h3> */}
+        </ToolBar>
       </footer>
     </>
   );
