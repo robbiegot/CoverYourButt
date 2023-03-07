@@ -8,6 +8,7 @@ import TermsList from '@/components/TermsList';
 import TitleBar from '@/components/TitleBar';
 import Toggle from '@/components/Toggle';
 import ToolBar from '@/components/ToolBar';
+import ToolBarItems from '@/components/ToolBarItems';
 import {
   hideCookies,
   hideHistoryItems,
@@ -154,7 +155,7 @@ export default function App() {
       </main>
       <footer id={styles.footer}>
         <ToolBar>
-          {/* <h3>Footer Components</h3> */}
+          <ToolBarItems />
         </ToolBar>
       </footer>
     </>
