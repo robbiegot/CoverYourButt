@@ -24,14 +24,13 @@ export function hideHistoryItems(requestedCount) {
   const history = [];
   const terms = loadTermsList();
   const historyToHide = {};
-  const historyItemCountByTerm = {};
+  const historyItemCountByTerm = Object.fromEntries(terms.map((term) => [term, 0]));
 
   return loop(() => {
-    const endTime =
-      (history.length && history[history.length - 1].lastVisitTime) ||
-      Date.now();
+    const endTime = history[history?.length - 1]?.lastVisitTime || Date.now();
 
-    return chromep.history.search({
+    return chromep.history
+      .search({
         text: '',
         startTime: 0,
         endTime: endTime,
@@ -44,33 +43,28 @@ export function hideHistoryItems(requestedCount) {
           if (!ids[id] && history.length < requestedCount) {
             ids[id] = true;
             terms.forEach((term) => {
-              if (
-                (item.title && item.title.includes(term)) ||
-                (item.url && item.url.includes(term))
-              ) {
+              if (item?.title?.includes(term) || item?.url?.includes(term)) { // * Term partially match historyItemZ title or url
+                console.log(item.title, item.url, term);
                 historyToHide[item.id] = item;
+                historyItemCountByTerm[term]++;
                 chrome.history.deleteUrl({ url: item.url });
               }
             });
             history.push(item);
           }
         });
-        if (
-          history.length > initialHistoryLength &&
-          history.length < requestedCount
-        )
-          return true;
+        saveHistoryItemCountByTerm(historyItemCountByTerm);
+        if (history.length > initialHistoryLength && history.length < requestedCount) return true;
         else {
           localStorage.setItem('hiddenHistoryItems', JSON.stringify(historyToHide || {}));
           return;
         }
       });
   });
-  saveHistoryItemCountByTerm(historyItemCountByTerm);
 }
 
 function saveHistoryItemCountByTerm(historyItemCountByTerm) {
-  return localStorage.setItem('historyItemCountByTerm', JSON.stringify(cookieCountByTerm));
+  return localStorage.setItem('historyItemCountByTerm', JSON.stringify(historyItemCountByTerm));
 }
 
 export function loadHistoryItemCountByTerm() {
@@ -83,12 +77,14 @@ function clearHistoryItemCountByTerm() {
 
 export async function hideCookies() {
   const terms = loadTermsList();
-  const countsByTerm = Object.fromEntries(terms.map((term) => [term, 0]));
+  const cookieCountByTerm = Object.fromEntries(terms.map((term) => [term, 0]));
   const allCookies = await chrome.cookies.getAll({});
-  const matchedCookies = allCookies.filter(({ domain }) => { // * Filter all cookies such that...
-    return terms.some((term) => { // * ...at least one term has a partial match in the domain
+  const matchedCookies = allCookies.filter(({ domain }) => {
+    // * Filter all cookies such that...
+    return terms.some((term) => {
+      // * ...at least one term has a partial match in the domain
       const partialMatch = domain?.toLowerCase()?.includes(term?.toLowerCase()); // ? also filter by path as well
-      if (partialMatch) countsByTerm[term]++;
+      if (partialMatch) cookieCountByTerm[term]++;
       return partialMatch;
     });
   });
@@ -99,7 +95,7 @@ export async function hideCookies() {
     chrome.cookies.remove({ name, storeId, url });
   });
   localStorage.setItem('hiddenCookies', JSON.stringify(matchedCookies || []));
-  saveCookieCountByTerm(countsByTerm);
+  saveCookieCountByTerm(cookieCountByTerm);
   return;
 }
 
@@ -116,9 +112,7 @@ function clearCookieCountByTerm() {
 }
 
 export function restoreHistoryItems() {
-  const historyToRestore = JSON.parse(
-    localStorage.getItem('hiddenHistoryItems') || '{}'
-  );
+  const historyToRestore = JSON.parse(localStorage.getItem('hiddenHistoryItems') || '{}');
   if (Object.keys(historyToRestore)?.length > 0) {
     for (const id in historyToRestore) {
       const { url } = historyToRestore[id];
@@ -130,35 +124,12 @@ export function restoreHistoryItems() {
 }
 
 export function restoreCookies() {
-  const cookiesToRestore = JSON.parse(
-    localStorage.getItem('hiddenCookies') || '[]'
-  );
+  const cookiesToRestore = JSON.parse(localStorage.getItem('hiddenCookies') || '[]');
   if (cookiesToRestore?.length > 0) {
     for (const cookie in cookiesToRestore) {
-      const {
-        domain,
-        expirationDate,
-        httpOnly,
-        name,
-        path,
-        sameSite,
-        secure,
-        storeId,
-        url,
-        value,
-      } = cookiesToRestore[cookie];
-      const newCookie = {
-        domain,
-        expirationDate,
-        httpOnly,
-        name,
-        path,
-        sameSite,
-        secure,
-        storeId,
-        url,
-        value,
-      };
+      const { domain, expirationDate, httpOnly, name, path, sameSite, secure, storeId, url, value } =
+        cookiesToRestore[cookie];
+      const newCookie = { domain, expirationDate, httpOnly, name, path, sameSite, secure, storeId, url, value };
       chrome.cookies.set(newCookie);
     }
   }
@@ -166,5 +137,4 @@ export function restoreCookies() {
   clearCookieCountByTerm();
 }
 
-const loop = (callback) =>
-  callback().then((val) => (val === true && loop(callback)) || val);
+const loop = (callback) => callback().then((val) => (val === true && loop(callback)) || val);

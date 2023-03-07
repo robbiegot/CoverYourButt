@@ -18,12 +18,10 @@ function ListEntry({ term, removeTerm, historyItemCount, cookieCount }) {
     spanRef.current.classList.remove(styles.hover_opaque, styles.hover_scale);
   };
 
+  console.log(term, historyItemCount, cookieCount);
+
   return (
-    <div
-      className={styles.row}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
+    <div className={styles.row} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       <div className={styles.term_container}>
         <p className={styles.term_name}>{term}</p>
         <div className={styles.term_counters}>
@@ -32,7 +30,7 @@ function ListEntry({ term, removeTerm, historyItemCount, cookieCount }) {
               <IconContext.Provider value={iconStyle}>
                 <BiHistory />
               </IconContext.Provider>
-              {historyItemCount || 0}
+              {historyItemCount}
             </>
           )}
           {typeof cookieCount === 'number' && (
@@ -40,7 +38,7 @@ function ListEntry({ term, removeTerm, historyItemCount, cookieCount }) {
               <IconContext.Provider value={iconStyle}>
                 <BiCookie />
               </IconContext.Provider>
-              {cookieCount || 0}
+              {cookieCount}
             </>
           )}
         </div>
@@ -62,12 +60,7 @@ function ListEntry({ term, removeTerm, historyItemCount, cookieCount }) {
   );
 }
 
-export default function TermsList({
-  listRef,
-  termsList,
-  removeTerm,
-  cookieCountByTerm,
-}) {
+export default function TermsList({ listRef, termsList, removeTerm, historyItemCountByTerm, cookieCountByTerm }) {
   return (
     <div id={styles.list_container} className={styles.expanded} ref={listRef}>
       {Array.from(termsList).map((term) => {
@@ -76,7 +69,7 @@ export default function TermsList({
             key={term}
             term={term}
             removeTerm={removeTerm}
-            historyItemCount={0}
+            historyItemCount={historyItemCountByTerm[term]}
             cookieCount={cookieCountByTerm[term]}
           />
         );
