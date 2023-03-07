@@ -11,6 +11,7 @@
 }
 
 #switch_container {
+  position: relative;
   height: var(--circle-size);
   width: var(--pill-width);
   display: grid;
