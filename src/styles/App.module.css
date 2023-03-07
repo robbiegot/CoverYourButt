@@ -1,5 +1,7 @@
 #main {
+  margin-top: -12px;
   padding: 12px;
+  overflow-y: scroll;
 }
 
 .spacer {
