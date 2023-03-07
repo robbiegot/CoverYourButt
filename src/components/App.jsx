@@ -7,6 +7,7 @@ import SearchForm from '@/components/SearchForm';
 import TermsList from '@/components/TermsList';
 import TitleBar from '@/components/TitleBar';
 import Toggle from '@/components/Toggle';
+import ToolBar from '@/components/ToolBar';
 import {
   hideCookies,
   hideHistoryItems,
@@ -53,7 +54,7 @@ export default function App() {
     }
     saveCovered(covered);
   }, [covered]);
-  
+
   useEffect(() => {
     if (initialRender.current) return;
     saveTermsList(Array.from(termsList));
@@ -89,7 +90,7 @@ export default function App() {
   return (
     <>
       <header>
-        <TitleBar />
+        <TitleBar>Cover Your Butt</TitleBar>
       </header>
       <main id={styles.main}>
         <Card>
@@ -149,6 +150,9 @@ export default function App() {
           )}
         </Card>
       </main>
+      <footer>
+        <ToolBar />
+      </footer>
     </>
   );
 }
