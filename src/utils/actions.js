@@ -27,7 +27,7 @@ export async function hideHistoryItems(requestedCount, useFuzzySearch = true) {
     });
     const historyItemsSearcher = new Fuse(allHistoryItems, {
       keys: ['title', 'url'],
-      threshold: 0.3,
+      threshold: 0.35,
     });
     const terms = loadTermsList();
     const historyItemCountByTerm = Object.fromEntries(terms.map((term) => [term, 0]));

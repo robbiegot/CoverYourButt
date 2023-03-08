@@ -1,21 +1,31 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import Toggle from 'react-toggle';
 
 import {
   loadCookiesPreference,
+  loadFuzzySearchPreference,
   loadHistoryPreference,
   saveCookiesPreference,
+  saveFuzzySearchPreference,
   saveHistoryPreference,
 } from '@/utils/actions';
 
 import styles from '@/styles/SettingsForm.module.css';
+import 'react-toggle/style.css';
 
 export default function SettingsForm({ setShowModal }) {
   const historyRef = useRef(null);
   const cookiesRef = useRef(null);
 
+  const [fuzzySearchPreference, setFuzzySearchPreference] = useState(loadFuzzySearchPreference());
+
   useEffect(() => {
     [historyRef.current.checked, cookiesRef.current.checked] = [loadHistoryPreference(), loadCookiesPreference()];
   }, []);
+
+  useEffect(() => {
+    saveFuzzySearchPreference(fuzzySearchPreference);
+  }, [fuzzySearchPreference]);
 
   return (
     <div id={styles.settings_form_container}>
@@ -27,6 +37,16 @@ export default function SettingsForm({ setShowModal }) {
         <input id={styles.input_text} ref={cookiesRef} type="checkbox" />
         <label htmlFor={styles.input_text}>cookies</label>
         <br />
+        <div id={styles.fuzzy_row}>
+          <label htmlFor="input_fuzzy">Enable fuzzy search</label>
+          <Toggle
+            id="input_fuzzy"
+            checked={fuzzySearchPreference}
+            onChange={() => {
+              setFuzzySearchPreference(() => !fuzzySearchPreference);
+            }}
+          />
+        </div>
       </form>
       <div id={styles.button_row}>
         <button

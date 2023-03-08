@@ -15,13 +15,14 @@ import {
   loadCookieCountByTerm,
   loadCookiesPreference,
   loadCovered,
+  loadFuzzySearchPreference,
   loadHistoryItemCountByTerm,
   loadHistoryPreference,
   loadTermsList,
   restoreCookies,
   restoreHistoryItems,
   saveCovered,
-  saveTermsList,
+  saveTermsList
 } from '@/utils/actions';
 
 import styles from '@/styles/App.module.css';
@@ -41,36 +42,39 @@ export default function App() {
   const circleRef = useRef(null);
   const listRef = useRef(null);
 
-  const selectivelyHideHistoryAndCookies = async (historyEnabled, cookiesEnabled) => {
+  const selectivelyHideHistoryAndCookies = async (historyEnabled, cookiesEnabled, fuzzySearchEnabled) => {
     processing.current = true;
-    return Promise.all([historyEnabled ? hideHistoryItems(10000) : null, cookiesEnabled ? hideCookies() : null])
-    .then(() => {
-      processing.current = false;
-      return true;
-    });
+    return Promise.all([historyEnabled ? hideHistoryItems(1000, fuzzySearchEnabled) : null, cookiesEnabled ? hideCookies(fuzzySearchEnabled) : null]).then(
+      () => {
+        processing.current = false;
+        return true;
+      }
+    );
   };
 
   const restoreHistoryAndCookies = async () => {
     restoreHistoryItems();
     restoreCookies();
     return true;
-  }
+  };
 
   useEffect(() => {
     if (initialRender.current) return;
     if (covered) {
-      const [historyEnabled, cookiesEnabled] = [loadHistoryPreference(), loadCookiesPreference()];
-      selectivelyHideHistoryAndCookies(historyEnabled, cookiesEnabled)
-      .then(() => {
+      const [historyEnabled, cookiesEnabled, fuzzySearchEnabled] = [
+        loadHistoryPreference(),
+        loadCookiesPreference(),
+        loadFuzzySearchPreference(),
+      ];
+      selectivelyHideHistoryAndCookies(historyEnabled, cookiesEnabled, fuzzySearchEnabled).then(() => {
         if (historyEnabled) setHistoryItemCountByTerm(loadHistoryItemCountByTerm());
         if (cookiesEnabled) setCookieCountByTerm(loadCookieCountByTerm());
       });
     } else {
-      restoreHistoryAndCookies()
-      .then(() => {
+      restoreHistoryAndCookies().then(() => {
         setHistoryItemCountByTerm({});
         setCookieCountByTerm({});
-      })
+      });
     }
     saveCovered(covered);
   }, [covered]);
@@ -80,14 +84,14 @@ export default function App() {
     saveTermsList(Array.from(termsList)); // * termsList is a Set
     if (covered) {
       restoreHistoryAndCookies()
-      .then(() => {
-        const [historyEnabled, cookiesEnabled] = [loadHistoryPreference(), loadCookiesPreference()];
-        return selectivelyHideHistoryAndCookies(historyEnabled, cookiesEnabled);
-      })
-      .then(() => {
-        if (historyEnabled) setHistoryItemCountByTerm(loadHistoryItemCountByTerm());
-        if (cookiesEnabled) setCookieCountByTerm(loadCookieCountByTerm());
-      });
+        .then(() => {
+          const [historyEnabled, cookiesEnabled] = [loadHistoryPreference(), loadCookiesPreference()];
+          return selectivelyHideHistoryAndCookies(historyEnabled, cookiesEnabled);
+        })
+        .then(() => {
+          if (historyEnabled) setHistoryItemCountByTerm(loadHistoryItemCountByTerm());
+          if (cookiesEnabled) setCookieCountByTerm(loadCookieCountByTerm());
+        });
     }
   }, [termsList]);
 
