@@ -26,13 +26,13 @@ import styles from '@/styles/App.module.css';
 import listStyles from '@/styles/TermsList.module.css';
 
 export default function App() {
-  const initialRender = useRef(true);
   const [covered, setCovered] = useState(loadCovered());
   const [showList, setShowList] = useState(false);
   const [termsList, setTermsList] = useState(new Set(loadTermsList()));
   const [cookieCountByTerm, setCookieCountByTerm] = useState(loadCookieCountByTerm());
   const [historyItemCountByTerm, setHistoryItemCountByTerm] = useState(loadHistoryItemCountByTerm());
   
+  const initialRender = useRef(true);
   const processing = useRef(false);
   const pillRef = useRef(null);
   const peachRef = useRef(null);
@@ -43,15 +43,11 @@ export default function App() {
     if (initialRender.current) return;
     if (covered) {
       processing.current = true;
-      (async () => {
-        hideHistoryItems(10000).then(() => {
-          setHistoryItemCountByTerm(loadHistoryItemCountByTerm());
-        });
-        hideCookies().then(() => {
-          setCookieCountByTerm(loadCookieCountByTerm());
-        });
-      })()
-      .then(() => processing.current = false)
+      Promise.all([hideHistoryItems(10000), hideCookies()]).then(() => {
+        setHistoryItemCountByTerm(loadHistoryItemCountByTerm());
+        setCookieCountByTerm(loadCookieCountByTerm());
+        processing.current = false;
+      });
     } else {
       restoreHistoryItems();
       setHistoryItemCountByTerm({});
@@ -67,11 +63,11 @@ export default function App() {
     if (covered) {
       restoreHistoryItems();
       restoreCookies();
-      hideHistoryItems(10000).then(() => {
-        setHistoryItemCountByTerm(loadHistoryItemCountByTerm()); // ! Temporarily displays 0
-      });
-      hideCookies().then(() => {
+      processing.current = true;
+      Promise.all([hideHistoryItems(10000), hideCookies()]).then(() => {
+        setHistoryItemCountByTerm(loadHistoryItemCountByTerm());
         setCookieCountByTerm(loadCookieCountByTerm());
+        processing.current = false;
       });
     }
   }, [termsList]);

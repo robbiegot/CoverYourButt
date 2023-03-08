@@ -28,14 +28,11 @@ export async function hideHistoryItems(requestedCount) {
     .then((historyItems) => {
       const terms = loadTermsList();
       const historyItemCountByTerm = Object.fromEntries(terms.map((term) => [term, 0]));
-      const historyToHide = historyItems
-        .filter((historyItem) => {
+      const historyToHide = historyItems.filter((historyItem) => {
           return terms.some((term) => {
-            if (historyItem?.title?.includes(term) || historyItem?.url?.includes(term)) {
-              // * Term partially matches with history item title and/or url
+            if (historyItem?.title?.includes(term) || historyItem?.url?.includes(term)) { // * Term partially matches with history item title and/or url
               historyItemCountByTerm[term]++;
               chrome.history.deleteUrl({ url: historyItem.url });
-              console.table(historyItem);
               return true;
             }
             return false;
@@ -65,25 +62,29 @@ function clearHistoryItemCountByTerm() {
 }
 
 export async function hideCookies() {
-  const terms = loadTermsList();
-  const cookieCountByTerm = Object.fromEntries(terms.map((term) => [term, 0]));
-  const allCookies = await chrome.cookies.getAll({});
-  const matchedCookies = allCookies.filter(({ domain }) => { // * Filter all cookies such that...
-    return terms.some((term) => { // * ...at least one term has a partial match in the domain
-      const partialMatch = domain?.toLowerCase()?.includes(term?.toLowerCase()); // ? also filter by path as well
-      if (partialMatch) cookieCountByTerm[term]++;
-      return partialMatch;
+  return chrome.cookies.getAll({})
+    .then(cookies => {
+      const terms = loadTermsList();
+      const cookieCountByTerm = Object.fromEntries(terms.map((term) => [term, 0]));
+      const cookiesToHide = cookies.filter(({ domain }) => { // * Filter all cookies such that...
+        return terms.some((term) => { // * ...at least one term has a partial match in the domain
+          if (domain?.toLowerCase()?.includes(term?.toLowerCase())) {
+            cookieCountByTerm[term]++;
+            return true;
+          }
+          return false;
+        });
+      })
+      cookiesToHide.forEach((cookie) => {
+        const { name, storeId, secure, domain, path } = cookie;
+        const url = 'http' + (secure ? 's' : '') + (domain[0] === '.' ? '://www' : '://') + domain + path;
+        cookie.url = url;
+        chrome.cookies.remove({ name, storeId, url });
+      })
+      localStorage.setItem('hiddenCookies', JSON.stringify(cookiesToHide || []));
+      saveCookieCountByTerm(cookieCountByTerm);
+      return true;
     });
-  });
-  matchedCookies.forEach((cookie) => {
-    const { name, storeId, secure, domain, path } = cookie;
-    const url = 'http' + (secure ? 's' : '') + (domain[0] === '.' ? '://www' : '://') + domain + path;
-    cookie.url = url;
-    chrome.cookies.remove({ name, storeId, url });
-  });
-  localStorage.setItem('hiddenCookies', JSON.stringify(matchedCookies || []));
-  saveCookieCountByTerm(cookieCountByTerm);
-  return;
 }
 
 function saveCookieCountByTerm(cookieCountByTerm) {
@@ -99,9 +100,8 @@ function clearCookieCountByTerm() {
 }
 
 export function restoreHistoryItems() {
-  JSON.parse(localStorage.getItem('hiddenHistoryItems') || '[]')?.forEach((historyItem) => {
-    // * hiddenHistoryItems is stored as { url: string }[]
-    chrome.history.addUrl(historyItem);
+  JSON.parse(localStorage.getItem('hiddenHistoryItems') || '[]')?.forEach((UrlDetails) => {    // * hiddenHistoryItems is stored as { url: string }[]
+    chrome.history.addUrl(UrlDetails);
   });
   localStorage.removeItem('hiddenHistoryItems');
   clearHistoryItemCountByTerm();
@@ -111,8 +111,7 @@ export function restoreCookies() {
   const cookiesToRestore = JSON.parse(localStorage.getItem('hiddenCookies') || '[]');
   if (cookiesToRestore?.length > 0) {
     for (const cookie in cookiesToRestore) {
-      const { domain, expirationDate, httpOnly, name, path, sameSite, secure, storeId, url, value } =
-        cookiesToRestore[cookie];
+      const { domain, expirationDate, httpOnly, name, path, sameSite, secure, storeId, url, value } = cookiesToRestore[cookie];
       const newCookie = { domain, expirationDate, httpOnly, name, path, sameSite, secure, storeId, url, value };
       chrome.cookies.set(newCookie);
     }
