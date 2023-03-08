@@ -3,13 +3,7 @@ import { useEffect, useRef } from 'react';
 import styles from '@/styles/Toggle.module.css';
 import peachUrl from '@/assets/peach.png';
 
-export default function Toggle({
-  covered,
-  setCovered,
-  pillRef,
-  peachRef,
-  circleRef,
-}) {
+export default function Toggle({ covered, setCovered, processing, pillRef, peachRef, circleRef }) {
   const initialRender = useRef(true);
 
   useEffect(() => {
@@ -31,7 +25,7 @@ export default function Toggle({
           ${styles.border_box} 
           ${covered ? styles.toggled : ''} 
         `}
-      ></div>
+      />
       <img
         id={styles.peach}
         ref={peachRef}
@@ -44,13 +38,16 @@ export default function Toggle({
       />
       <div
         id={styles.circle}
-        onClick={() => setCovered(() => !covered)}
+        onClick={() => {
+          if (processing.current) return console.log('Processing:', processing.current);
+          setCovered(() => !covered);
+        }}
         ref={circleRef}
         className={`
           ${styles.border_box} 
           ${covered ? styles.toggled : ''} 
         `}
-      ></div>
+      />
     </div>
   );
 }

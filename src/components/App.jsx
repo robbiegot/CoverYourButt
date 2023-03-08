@@ -32,7 +32,8 @@ export default function App() {
   const [termsList, setTermsList] = useState(new Set(loadTermsList()));
   const [cookieCountByTerm, setCookieCountByTerm] = useState(loadCookieCountByTerm());
   const [historyItemCountByTerm, setHistoryItemCountByTerm] = useState(loadHistoryItemCountByTerm());
-
+  
+  const processing = useRef(false);
   const pillRef = useRef(null);
   const peachRef = useRef(null);
   const circleRef = useRef(null);
@@ -41,12 +42,16 @@ export default function App() {
   useEffect(() => {
     if (initialRender.current) return;
     if (covered) {
-      hideHistoryItems(10000).then(() => {
-        setHistoryItemCountByTerm(loadHistoryItemCountByTerm());
-      });
-      hideCookies().then(() => {
-        setCookieCountByTerm(loadCookieCountByTerm());
-      });
+      processing.current = true;
+      (async () => {
+        hideHistoryItems(10000).then(() => {
+          setHistoryItemCountByTerm(loadHistoryItemCountByTerm());
+        });
+        hideCookies().then(() => {
+          setCookieCountByTerm(loadCookieCountByTerm());
+        });
+      })()
+      .then(() => processing.current = false)
     } else {
       restoreHistoryItems();
       setHistoryItemCountByTerm({});
@@ -101,6 +106,7 @@ export default function App() {
             <Toggle
               covered={covered}
               setCovered={setCovered}
+              processing={processing}
               pillRef={pillRef}
               peachRef={peachRef}
               circleRef={circleRef}

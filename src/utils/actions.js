@@ -18,47 +18,38 @@ export function loadTermsList() {
   return JSON.parse(localStorage.getItem('termsList') || '[]');
 }
 
-export function hideHistoryItems(requestedCount) {
-  const ids = {};
-  const history = [];
-  const terms = loadTermsList();
-  const historyToHide = {};
-  const historyItemCountByTerm = Object.fromEntries(terms.map((term) => [term, 0]));
-
-  return loop(() => {
-    const endTime = history[history?.length - 1]?.lastVisitTime || Date.now();
-
-    return chromep.history
-      .search({
-        text: '',
-        startTime: 0,
-        endTime: endTime,
-        maxResults: 1000,
-      })
-      .then((historyItems) => {
-        const initialHistoryLength = history.length;
-        historyItems.forEach((item) => {
-          const id = item.id;
-          if (!ids[id] && history.length < requestedCount) {
-            ids[id] = true;
-            terms.forEach((term) => {
-              if (item?.title?.includes(term) || item?.url?.includes(term)) { // * Term partially matches with history item title and/or url
-                historyToHide[item.id] = item;
-                historyItemCountByTerm[term]++;
-                chrome.history.deleteUrl({ url: item.url });
-              }
-            });
-            history.push(item);
-          }
+export async function hideHistoryItems(requestedCount) {
+  return chrome.history
+    .search({
+      text: '',
+      startTime: 0,
+      maxResults: requestedCount,
+    })
+    .then((historyItems) => {
+      const terms = loadTermsList();
+      const historyItemCountByTerm = Object.fromEntries(terms.map((term) => [term, 0]));
+      const historyToHide = historyItems
+        .filter((historyItem) => {
+          return terms.some((term) => {
+            if (historyItem?.title?.includes(term) || historyItem?.url?.includes(term)) {
+              // * Term partially matches with history item title and/or url
+              historyItemCountByTerm[term]++;
+              chrome.history.deleteUrl({ url: historyItem.url });
+              console.table(historyItem);
+              return true;
+            }
+            return false;
+          });
+        })
+        .map(({ url }) => {
+          return {
+            url,
+          };
         });
-        saveHistoryItemCountByTerm(historyItemCountByTerm);
-        if (history.length > initialHistoryLength && history.length < requestedCount) return true;
-        else {
-          localStorage.setItem('hiddenHistoryItems', JSON.stringify(historyToHide || {}));
-          return;
-        }
-      });
-  });
+      localStorage.setItem('hiddenHistoryItems', JSON.stringify(historyToHide || []));
+      saveHistoryItemCountByTerm(historyItemCountByTerm);
+      return true;
+    });
 }
 
 function saveHistoryItemCountByTerm(historyItemCountByTerm) {
@@ -77,10 +68,8 @@ export async function hideCookies() {
   const terms = loadTermsList();
   const cookieCountByTerm = Object.fromEntries(terms.map((term) => [term, 0]));
   const allCookies = await chrome.cookies.getAll({});
-  const matchedCookies = allCookies.filter(({ domain }) => {
-    // * Filter all cookies such that...
-    return terms.some((term) => {
-      // * ...at least one term has a partial match in the domain
+  const matchedCookies = allCookies.filter(({ domain }) => { // * Filter all cookies such that...
+    return terms.some((term) => { // * ...at least one term has a partial match in the domain
       const partialMatch = domain?.toLowerCase()?.includes(term?.toLowerCase()); // ? also filter by path as well
       if (partialMatch) cookieCountByTerm[term]++;
       return partialMatch;
@@ -110,13 +99,10 @@ function clearCookieCountByTerm() {
 }
 
 export function restoreHistoryItems() {
-  const historyToRestore = JSON.parse(localStorage.getItem('hiddenHistoryItems') || '{}');
-  if (Object.keys(historyToRestore)?.length > 0) {
-    for (const id in historyToRestore) {
-      const { url } = historyToRestore[id];
-      chrome.history.addUrl({ url });
-    }
-  }
+  JSON.parse(localStorage.getItem('hiddenHistoryItems') || '[]')?.forEach((historyItem) => {
+    // * hiddenHistoryItems is stored as { url: string }[]
+    chrome.history.addUrl(historyItem);
+  });
   localStorage.removeItem('hiddenHistoryItems');
   clearHistoryItemCountByTerm();
 }
