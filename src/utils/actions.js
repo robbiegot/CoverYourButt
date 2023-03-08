@@ -120,4 +120,20 @@ export function restoreCookies() {
   clearCookieCountByTerm();
 }
 
+export function saveHistoryPreference(historyPreference) {
+  localStorage.setItem('historyEnabled', JSON.stringify(historyPreference));
+}
+
+export function loadHistoryPreference() {
+  return JSON.parse(localStorage.getItem('historyEnabled') || 'false')
+}
+
+export function saveCookiesPreference(cookiesPreference) {
+  localStorage.setItem('cookiesEnabled', JSON.stringify(cookiesPreference));
+}
+
+export function loadCookiesPreference() {
+  return JSON.parse(localStorage.getItem('cookiesEnabled') || 'false')
+}
+
 const loop = (callback) => callback().then((val) => (val === true && loop(callback)) || val);

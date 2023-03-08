@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react';
 
-import styles from '@/styles/Toggle.module.css';
 import peachUrl from '@/assets/peach.png';
+
+import styles from '@/styles/Toggle.module.css';
 
 export default function Toggle({ covered, setCovered, processing, pillRef, peachRef, circleRef }) {
   const initialRender = useRef(true);
@@ -39,7 +40,7 @@ export default function Toggle({ covered, setCovered, processing, pillRef, peach
       <div
         id={styles.circle}
         onClick={() => {
-          if (processing.current) return console.log('Processing:', processing.current);
+          if (processing.current) return;
           setCovered(() => !covered);
         }}
         ref={circleRef}

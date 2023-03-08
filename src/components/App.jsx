@@ -13,8 +13,10 @@ import {
   hideCookies,
   hideHistoryItems,
   loadCookieCountByTerm,
+  loadCookiesPreference,
   loadCovered,
   loadHistoryItemCountByTerm,
+  loadHistoryPreference,
   loadTermsList,
   restoreCookies,
   restoreHistoryItems,
@@ -31,7 +33,7 @@ export default function App() {
   const [termsList, setTermsList] = useState(new Set(loadTermsList()));
   const [cookieCountByTerm, setCookieCountByTerm] = useState(loadCookieCountByTerm());
   const [historyItemCountByTerm, setHistoryItemCountByTerm] = useState(loadHistoryItemCountByTerm());
-  
+
   const initialRender = useRef(true);
   const processing = useRef(false);
   const pillRef = useRef(null);
@@ -39,35 +41,52 @@ export default function App() {
   const circleRef = useRef(null);
   const listRef = useRef(null);
 
+  const selectivelyHideHistoryAndCookies = async (historyEnabled, cookiesEnabled) => {
+    processing.current = true;
+    return Promise.all([historyEnabled ? hideHistoryItems(10000) : null, cookiesEnabled ? hideCookies() : null])
+    .then(() => {
+      processing.current = false;
+      return true;
+    });
+  };
+
+  const restoreHistoryAndCookies = async () => {
+    restoreHistoryItems();
+    restoreCookies();
+    return true;
+  }
+
   useEffect(() => {
     if (initialRender.current) return;
     if (covered) {
-      processing.current = true;
-      Promise.all([hideHistoryItems(10000), hideCookies()]).then(() => {
-        setHistoryItemCountByTerm(loadHistoryItemCountByTerm());
-        setCookieCountByTerm(loadCookieCountByTerm());
-        processing.current = false;
+      const [historyEnabled, cookiesEnabled] = [loadHistoryPreference(), loadCookiesPreference()];
+      selectivelyHideHistoryAndCookies(historyEnabled, cookiesEnabled)
+      .then(() => {
+        if (historyEnabled) setHistoryItemCountByTerm(loadHistoryItemCountByTerm());
+        if (cookiesEnabled) setCookieCountByTerm(loadCookieCountByTerm());
       });
     } else {
-      restoreHistoryItems();
-      setHistoryItemCountByTerm({});
-      restoreCookies();
-      setCookieCountByTerm({});
+      restoreHistoryAndCookies()
+      .then(() => {
+        setHistoryItemCountByTerm({});
+        setCookieCountByTerm({});
+      })
     }
     saveCovered(covered);
   }, [covered]);
 
   useEffect(() => {
     if (initialRender.current) return;
-    saveTermsList(Array.from(termsList));
+    saveTermsList(Array.from(termsList)); // * termsList is a Set
     if (covered) {
-      restoreHistoryItems();
-      restoreCookies();
-      processing.current = true;
-      Promise.all([hideHistoryItems(10000), hideCookies()]).then(() => {
-        setHistoryItemCountByTerm(loadHistoryItemCountByTerm());
-        setCookieCountByTerm(loadCookieCountByTerm());
-        processing.current = false;
+      restoreHistoryAndCookies()
+      .then(() => {
+        const [historyEnabled, cookiesEnabled] = [loadHistoryPreference(), loadCookiesPreference()];
+        return selectivelyHideHistoryAndCookies(historyEnabled, cookiesEnabled);
+      })
+      .then(() => {
+        if (historyEnabled) setHistoryItemCountByTerm(loadHistoryItemCountByTerm());
+        if (cookiesEnabled) setCookieCountByTerm(loadCookieCountByTerm());
       });
     }
   }, [termsList]);
