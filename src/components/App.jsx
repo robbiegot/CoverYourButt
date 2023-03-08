@@ -22,7 +22,7 @@ import {
   restoreCookies,
   restoreHistoryItems,
   saveCovered,
-  saveTermsList
+  saveTermsList,
 } from '@/utils/actions';
 
 import styles from '@/styles/App.module.css';
@@ -44,18 +44,29 @@ export default function App() {
 
   const selectivelyHideHistoryAndCookies = async (historyEnabled, cookiesEnabled, fuzzySearchEnabled) => {
     processing.current = true;
-    return Promise.all([historyEnabled ? hideHistoryItems(1000, fuzzySearchEnabled) : null, cookiesEnabled ? hideCookies(fuzzySearchEnabled) : null]).then(
-      () => {
+    const processingHistory = historyEnabled
+      ? Promise.resolve()
+        .then((_) => hideHistoryItems(10000, fuzzySearchEnabled))
+      : null;
+    const processingCookies = cookiesEnabled
+      ? Promise.resolve()
+        .then((_) => hideCookies())
+      : null;
+    Promise.all([processingHistory, processingCookies])
+      .then((_) => {
+        if (historyEnabled) setHistoryItemCountByTerm(loadHistoryItemCountByTerm());
+        if (cookiesEnabled) setCookieCountByTerm(loadCookieCountByTerm());
         processing.current = false;
         return true;
-      }
-    );
+      });
   };
 
   const restoreHistoryAndCookies = async () => {
-    restoreHistoryItems();
-    restoreCookies();
-    return true;
+    return Promise.resolve().then((_) => {
+      restoreHistoryItems();
+      restoreCookies();
+      return true;
+    });
   };
 
   useEffect(() => {
@@ -85,8 +96,12 @@ export default function App() {
     if (covered) {
       restoreHistoryAndCookies()
         .then(() => {
-          const [historyEnabled, cookiesEnabled] = [loadHistoryPreference(), loadCookiesPreference()];
-          return selectivelyHideHistoryAndCookies(historyEnabled, cookiesEnabled);
+          const [historyEnabled, cookiesEnabled, fuzzySearchEnabled] = [
+            loadHistoryPreference(),
+            loadCookiesPreference(),
+            loadFuzzySearchPreference(),
+          ];
+          return selectivelyHideHistoryAndCookies(historyEnabled, cookiesEnabled, fuzzySearchEnabled);
         })
         .then(() => {
           if (historyEnabled) setHistoryItemCountByTerm(loadHistoryItemCountByTerm());
