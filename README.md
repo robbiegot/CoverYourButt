@@ -50,7 +50,7 @@ Googling a birthday surprise on your family computer?? Trying to get ride of emb
 
 <p align="center">
   <kbd>
-  <img src="./public/product-screenshot.png">
+  <img width = '30%' src="./public/product-screenshot.png">
     </kbd>
 </p>
 
