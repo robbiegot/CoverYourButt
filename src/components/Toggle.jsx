@@ -19,7 +19,7 @@ export default function Toggle({ covered, setCovered, processingHide, processing
 
   useEffect(() => {
     if (processingHide) return circleRef.current.classList.add(styles.processing)
-    return circleRef.current.classList.remove(styles.processing)
+    return circleRef.current.classList.remove(styles.processing)//consider adding this inside a setTimeout. It looks weird when it happens too quickly
   }, [processingHide])
 
   return (
