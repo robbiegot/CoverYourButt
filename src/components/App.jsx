@@ -60,7 +60,7 @@ export default function App() {
         if (historyEnabled) setHistoryItemCountByTerm(loadHistoryItemCountByTerm());
         if (cookiesEnabled) setCookieCountByTerm(loadCookieCountByTerm());
         processing.current = false;
-        setProcessingHide(false);
+        setTimeout(() => setProcessingHide(false), 2000)
         return true;
       });
   };
@@ -155,7 +155,8 @@ export default function App() {
           <section className={styles.spacer}>
             <p>
               Your butt is
-              <strong> {covered ? 'COVERED' : 'SHOWING '}</strong>
+              {processingHide && <strong>...Searching For History</strong>}
+              {!processingHide && <strong> {covered ? 'COVERED' : 'SHOWING '}</strong>}
               {!covered && <FiAlertTriangle />}
             </p>
           </section>
