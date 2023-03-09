@@ -1,4 +1,4 @@
-import chromep from 'chrome-promise';
+import Fuse from 'fuse.js';
 
 export function saveCovered(covered) {
   localStorage.setItem('covered', JSON.stringify(covered ? 1 : 0)); // 'covered' will always be stored as '1' or '0'
@@ -18,47 +18,62 @@ export function loadTermsList() {
   return JSON.parse(localStorage.getItem('termsList') || '[]');
 }
 
-export function hideHistoryItems(requestedCount) {
-  const ids = {};
-  const history = [];
-  const terms = loadTermsList();
-  const historyToHide = {};
-  const historyItemCountByTerm = Object.fromEntries(terms.map((term) => [term, 0]));
-
-  return loop(() => {
-    const endTime = history[history?.length - 1]?.lastVisitTime || Date.now();
-
-    return chromep.history
+export async function hideHistoryItems(requestedCount, useFuzzySearch = true) {
+  if (useFuzzySearch) {
+    const allHistoryItems = await chrome.history.search({
+      text: '',
+      startTime: 0,
+      maxResults: requestedCount,
+    });
+    const historyItemsSearcher = new Fuse(allHistoryItems, {
+      keys: ['title', 'url'],
+      threshold: 0.35,
+    });
+    const terms = loadTermsList();
+    const historyItemCountByTerm = Object.fromEntries(terms.map((term) => [term, 0]));
+    const historyToHide = terms
+      .map((term) => {
+        return historyItemsSearcher.search(term).map(({ item: matchedHistoryItem }) => {
+          historyItemCountByTerm[term]++;
+          const UrlDetails = { url: matchedHistoryItem.url };
+          chrome.history.deleteUrl({ url: matchedHistoryItem.url });
+          return UrlDetails;
+        });
+      })
+      .flat();
+    localStorage.setItem('hiddenHistoryItems', JSON.stringify(historyToHide || []));
+    saveHistoryItemCountByTerm(historyItemCountByTerm);
+  } else {
+    return chrome.history
       .search({
         text: '',
         startTime: 0,
-        endTime: endTime,
-        maxResults: 1000,
+        maxResults: requestedCount,
       })
       .then((historyItems) => {
-        const initialHistoryLength = history.length;
-        historyItems.forEach((item) => {
-          const id = item.id;
-          if (!ids[id] && history.length < requestedCount) {
-            ids[id] = true;
-            terms.forEach((term) => {
-              if (item?.title?.includes(term) || item?.url?.includes(term)) { // * Term partially matches with history item title and/or url
-                historyToHide[item.id] = item;
+        const terms = loadTermsList();
+        const historyItemCountByTerm = Object.fromEntries(terms.map((term) => [term, 0]));
+        const historyToHide = historyItems
+          .filter((historyItem) => {
+            return terms.some((term) => {
+              if (historyItem?.title?.includes(term) || historyItem?.url?.includes(term)) {
                 historyItemCountByTerm[term]++;
-                chrome.history.deleteUrl({ url: item.url });
+                chrome.history.deleteUrl({ url: historyItem.url });
+                return true;
               }
+              return false;
             });
-            history.push(item);
-          }
-        });
+          })
+          .map(({ url }) => {
+            return {
+              url,
+            };
+          });
+        localStorage.setItem('hiddenHistoryItems', JSON.stringify(historyToHide || []));
         saveHistoryItemCountByTerm(historyItemCountByTerm);
-        if (history.length > initialHistoryLength && history.length < requestedCount) return true;
-        else {
-          localStorage.setItem('hiddenHistoryItems', JSON.stringify(historyToHide || {}));
-          return;
-        }
       });
-  });
+  }
+  return true;
 }
 
 function saveHistoryItemCountByTerm(historyItemCountByTerm) {
@@ -73,28 +88,53 @@ function clearHistoryItemCountByTerm() {
   return localStorage.removeItem('historyItemCountByTerm');
 }
 
-export async function hideCookies() {
-  const terms = loadTermsList();
-  const cookieCountByTerm = Object.fromEntries(terms.map((term) => [term, 0]));
-  const allCookies = await chrome.cookies.getAll({});
-  const matchedCookies = allCookies.filter(({ domain }) => {
-    // * Filter all cookies such that...
-    return terms.some((term) => {
-      // * ...at least one term has a partial match in the domain
-      const partialMatch = domain?.toLowerCase()?.includes(term?.toLowerCase()); // ? also filter by path as well
-      if (partialMatch) cookieCountByTerm[term]++;
-      return partialMatch;
+export async function hideCookies(useFuzzySearch = true) {
+  if (useFuzzySearch) {
+    const allCookies = await chrome.cookies.getAll({});
+    const cookiesSearcher = new Fuse(allCookies, {
+      keys: ['domain', 'path'],
+      threshold: 0.2,
     });
-  });
-  matchedCookies.forEach((cookie) => {
-    const { name, storeId, secure, domain, path } = cookie;
-    const url = 'http' + (secure ? 's' : '') + (domain[0] === '.' ? '://www' : '://') + domain + path;
-    cookie.url = url;
-    chrome.cookies.remove({ name, storeId, url });
-  });
-  localStorage.setItem('hiddenCookies', JSON.stringify(matchedCookies || []));
-  saveCookieCountByTerm(cookieCountByTerm);
-  return;
+    const terms = loadTermsList();
+    const cookieCountByTerm = Object.fromEntries(terms.map((term) => [term, 0]));
+    const cookiesToHide = terms
+      .map((term) => {
+        return cookiesSearcher.search(term).map(({ item: matchedCookie }) => {
+          const { name, storeId, secure, domain, path } = matchedCookie;
+          cookieCountByTerm[term]++;
+          const url = 'http' + (secure ? 's' : '') + (domain[0] === '.' ? '://www' : '://') + domain + path;
+          matchedCookie.url = url;
+          chrome.cookies.remove({ name, storeId, url });
+          return matchedCookie;
+        });
+      })
+      .flat();
+    localStorage.setItem('hiddenCookies', JSON.stringify(cookiesToHide || []));
+    saveCookieCountByTerm(cookieCountByTerm);
+  } else {
+    return chrome.cookies.getAll({}).then((cookies) => {
+      const terms = loadTermsList();
+      const cookieCountByTerm = Object.fromEntries(terms.map((term) => [term, 0]));
+      const cookiesToHide = cookies.filter(({ domain }) => {
+        return terms.some((term) => {
+          if (domain?.toLowerCase()?.includes(term?.toLowerCase())) {
+            cookieCountByTerm[term]++;
+            return true;
+          }
+          return false;
+        });
+      });
+      cookiesToHide.forEach((cookie) => {
+        const { name, storeId, secure, domain, path } = cookie;
+        const url = 'http' + (secure ? 's' : '') + (domain[0] === '.' ? '://www' : '://') + domain + path;
+        cookie.url = url;
+        chrome.cookies.remove({ name, storeId, url });
+      });
+      localStorage.setItem('hiddenCookies', JSON.stringify(cookiesToHide || []));
+      saveCookieCountByTerm(cookieCountByTerm);
+    });
+  }
+  return true;
 }
 
 function saveCookieCountByTerm(cookieCountByTerm) {
@@ -110,29 +150,47 @@ function clearCookieCountByTerm() {
 }
 
 export function restoreHistoryItems() {
-  const historyToRestore = JSON.parse(localStorage.getItem('hiddenHistoryItems') || '{}');
-  if (Object.keys(historyToRestore)?.length > 0) {
-    for (const id in historyToRestore) {
-      const { url } = historyToRestore[id];
-      chrome.history.addUrl({ url });
-    }
-  }
+  const historyItemsToRestore = JSON.parse(localStorage.getItem('hiddenHistoryItems') || '[]'); // * hiddenHistoryItems is stored as { url: string }[]
+  historyItemsToRestore?.forEach((UrlDetails) => {
+    chrome.history.addUrl(UrlDetails);
+  });
   localStorage.removeItem('hiddenHistoryItems');
   clearHistoryItemCountByTerm();
 }
 
 export function restoreCookies() {
   const cookiesToRestore = JSON.parse(localStorage.getItem('hiddenCookies') || '[]');
-  if (cookiesToRestore?.length > 0) {
-    for (const cookie in cookiesToRestore) {
-      const { domain, expirationDate, httpOnly, name, path, sameSite, secure, storeId, url, value } =
-        cookiesToRestore[cookie];
-      const newCookie = { domain, expirationDate, httpOnly, name, path, sameSite, secure, storeId, url, value };
-      chrome.cookies.set(newCookie);
+  cookiesToRestore?.forEach(
+    ({ domain, expirationDate, httpOnly, name, path, sameSite, secure, storeId, url, value }) => {
+      chrome.cookies.set({ domain, expirationDate, httpOnly, name, path, sameSite, secure, storeId, url, value });
     }
-  }
+  );
   localStorage.removeItem('hiddenCookies');
   clearCookieCountByTerm();
+}
+
+export function saveHistoryPreference(historyPreference) {
+  localStorage.setItem('historyEnabled', JSON.stringify(historyPreference));
+}
+
+export function loadHistoryPreference() {
+  return JSON.parse(localStorage.getItem('historyEnabled') || 'false');
+}
+
+export function saveCookiesPreference(cookiesPreference) {
+  localStorage.setItem('cookiesEnabled', JSON.stringify(cookiesPreference));
+}
+
+export function loadCookiesPreference() {
+  return JSON.parse(localStorage.getItem('cookiesEnabled') || 'false');
+}
+
+export function saveFuzzySearchPreference(fuzzySearchPreference) {
+  localStorage.setItem('fuzzySearchEnabled', JSON.stringify(fuzzySearchPreference));
+}
+
+export function loadFuzzySearchPreference() {
+  return JSON.parse(localStorage.getItem('fuzzySearchEnabled') || 'false');
 }
 
 const loop = (callback) => callback().then((val) => (val === true && loop(callback)) || val);

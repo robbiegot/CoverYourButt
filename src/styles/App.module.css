@@ -1,5 +1,9 @@
 #main {
-  padding: 12px;
+  padding: 0.75rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  row-gap: 1rem;
 }
 
 .spacer {

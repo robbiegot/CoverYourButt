@@ -7,12 +7,17 @@ import SearchForm from '@/components/SearchForm';
 import TermsList from '@/components/TermsList';
 import TitleBar from '@/components/TitleBar';
 import Toggle from '@/components/Toggle';
+import ToolBar from '@/components/ToolBar';
+import ToolBarItems from '@/components/ToolBarItems';
 import {
   hideCookies,
   hideHistoryItems,
   loadCookieCountByTerm,
+  loadCookiesPreference,
   loadCovered,
+  loadFuzzySearchPreference,
   loadHistoryItemCountByTerm,
+  loadHistoryPreference,
   loadTermsList,
   restoreCookies,
   restoreHistoryItems,
@@ -24,48 +29,89 @@ import styles from '@/styles/App.module.css';
 import listStyles from '@/styles/TermsList.module.css';
 
 export default function App() {
-  const initialRender = useRef(true);
   const [covered, setCovered] = useState(loadCovered());
   const [showList, setShowList] = useState(false);
+  const [processingHide, setProcessingHide] = useState(false);
+
   const [termsList, setTermsList] = useState(new Set(loadTermsList()));
   const [cookieCountByTerm, setCookieCountByTerm] = useState(loadCookieCountByTerm());
   const [historyItemCountByTerm, setHistoryItemCountByTerm] = useState(loadHistoryItemCountByTerm());
 
+  const initialRender = useRef(true);
+  const processing = useRef(false);
   const pillRef = useRef(null);
   const peachRef = useRef(null);
   const circleRef = useRef(null);
   const listRef = useRef(null);
 
+  const selectivelyHideHistoryAndCookies = async (historyEnabled, cookiesEnabled, fuzzySearchEnabled) => {
+    setProcessingHide(true);
+    processing.current = true;
+    const processingHistory = historyEnabled
+      ? Promise.resolve()
+        .then((_) => hideHistoryItems(10000, fuzzySearchEnabled))
+      : null;
+    const processingCookies = cookiesEnabled
+      ? Promise.resolve()
+        .then((_) => hideCookies())
+      : null;
+    Promise.all([processingHistory, processingCookies])
+      .then((_) => {
+        if (historyEnabled) setHistoryItemCountByTerm(loadHistoryItemCountByTerm());
+        if (cookiesEnabled) setCookieCountByTerm(loadCookieCountByTerm());
+        processing.current = false;
+        setTimeout(() => setProcessingHide(false), 2000)
+        return true;
+      });
+  };
+
+  const restoreHistoryAndCookies = async () => {
+    return Promise.resolve().then((_) => {
+      restoreHistoryItems();
+      restoreCookies();
+
+      return true;
+    });
+  };
+
   useEffect(() => {
     if (initialRender.current) return;
     if (covered) {
-      hideHistoryItems(10000).then(() => {
-        setHistoryItemCountByTerm(loadHistoryItemCountByTerm());
-      });
-      hideCookies().then(() => {
-        setCookieCountByTerm(loadCookieCountByTerm());
+      const [historyEnabled, cookiesEnabled, fuzzySearchEnabled] = [
+        loadHistoryPreference(),
+        loadCookiesPreference(),
+        loadFuzzySearchPreference(),
+      ];
+      selectivelyHideHistoryAndCookies(historyEnabled, cookiesEnabled, fuzzySearchEnabled).then(() => {
+        if (historyEnabled) setHistoryItemCountByTerm(loadHistoryItemCountByTerm());
+        if (cookiesEnabled) setCookieCountByTerm(loadCookieCountByTerm());
       });
     } else {
-      restoreHistoryItems();
-      setHistoryItemCountByTerm({});
-      restoreCookies();
-      setCookieCountByTerm({});
+      restoreHistoryAndCookies().then(() => {
+        setHistoryItemCountByTerm({});
+        setCookieCountByTerm({});
+      });
     }
     saveCovered(covered);
   }, [covered]);
-  
+
   useEffect(() => {
     if (initialRender.current) return;
-    saveTermsList(Array.from(termsList));
+    saveTermsList(Array.from(termsList)); // * termsList is a Set
     if (covered) {
-      restoreHistoryItems();
-      restoreCookies();
-      hideHistoryItems(10000).then(() => {
-        setHistoryItemCountByTerm(loadHistoryItemCountByTerm()); // ! Temporarily displays 0
-      });
-      hideCookies().then(() => {
-        setCookieCountByTerm(loadCookieCountByTerm());
-      });
+      restoreHistoryAndCookies()
+        .then(() => {
+          const [historyEnabled, cookiesEnabled, fuzzySearchEnabled] = [
+            loadHistoryPreference(),
+            loadCookiesPreference(),
+            loadFuzzySearchPreference(),
+          ];
+          return selectivelyHideHistoryAndCookies(historyEnabled, cookiesEnabled, fuzzySearchEnabled);
+        })
+        .then(() => {
+          if (historyEnabled) setHistoryItemCountByTerm(loadHistoryItemCountByTerm());
+          if (cookiesEnabled) setCookieCountByTerm(loadCookieCountByTerm());
+        });
     }
   }, [termsList]);
 
@@ -88,8 +134,10 @@ export default function App() {
 
   return (
     <>
-      <header>
-        <TitleBar />
+      <header id={styles.header}>
+        <TitleBar>
+          <h1>Cover Your Butt</h1>
+        </TitleBar>
       </header>
       <main id={styles.main}>
         <Card>
@@ -97,6 +145,8 @@ export default function App() {
             <Toggle
               covered={covered}
               setCovered={setCovered}
+              processing={processing}
+              processingHide={processingHide}
               pillRef={pillRef}
               peachRef={peachRef}
               circleRef={circleRef}
@@ -105,7 +155,8 @@ export default function App() {
           <section className={styles.spacer}>
             <p>
               Your butt is
-              <strong> {covered ? 'COVERED' : 'SHOWING '}</strong>
+              {processingHide && <strong>...Searching For History</strong>}
+              {!processingHide && <strong> {covered ? 'COVERED' : 'SHOWING '}</strong>}
               {!covered && <FiAlertTriangle />}
             </p>
           </section>
@@ -128,7 +179,7 @@ export default function App() {
             style={{ textAlign: 'center', cursor: 'pointer' }}
             onClick={() => {
               if (showList) {
-                setTimeout(() => setShowList(() => false), 700);
+                setTimeout(() => setShowList(false), 600); // ! Flashes if set to 700ms
                 listRef.current.classList.remove(listStyles.expanded);
                 listRef.current.classList.add(listStyles.collapsed);
               } else {
@@ -149,6 +200,11 @@ export default function App() {
           )}
         </Card>
       </main>
+      <footer id={styles.footer}>
+        <ToolBar>
+          <ToolBarItems />
+        </ToolBar>
+      </footer>
     </>
   );
 }

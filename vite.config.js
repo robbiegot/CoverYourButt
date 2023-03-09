@@ -2,7 +2,7 @@ import path from 'path';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-const mode = 'development';
+const mode = 'production';
 
 export default defineConfig({
   plugins: [react()],

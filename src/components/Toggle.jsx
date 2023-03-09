@@ -1,15 +1,10 @@
 import { useEffect, useRef } from 'react';
 
-import styles from '@/styles/Toggle.module.css';
 import peachUrl from '@/assets/peach.png';
 
-export default function Toggle({
-  covered,
-  setCovered,
-  pillRef,
-  peachRef,
-  circleRef,
-}) {
+import styles from '@/styles/Toggle.module.css';
+
+export default function Toggle({ covered, setCovered, processingHide, processing, pillRef, peachRef, circleRef }) {
   const initialRender = useRef(true);
 
   useEffect(() => {
@@ -22,6 +17,11 @@ export default function Toggle({
     initialRender.current = false;
   }, []);
 
+  useEffect(() => {
+    if (processingHide) return circleRef.current.classList.add(styles.processing)
+    return circleRef.current.classList.remove(styles.processing)//consider adding this inside a setTimeout. It looks weird when it happens too quickly
+  }, [processingHide])
+
   return (
     <div id={styles.switch_container}>
       <div
@@ -31,7 +31,7 @@ export default function Toggle({
           ${styles.border_box} 
           ${covered ? styles.toggled : ''} 
         `}
-      ></div>
+      />
       <img
         id={styles.peach}
         ref={peachRef}
@@ -44,13 +44,16 @@ export default function Toggle({
       />
       <div
         id={styles.circle}
-        onClick={() => setCovered(() => !covered)}
+        onClick={() => {
+          if (processing.current) return;
+          setCovered(() => !covered);
+        }}
         ref={circleRef}
         className={`
           ${styles.border_box} 
           ${covered ? styles.toggled : ''} 
         `}
-      ></div>
+      >{processingHide && <p style={{ textAlign: "center" }}>Wait!</p>}</div>
     </div>
   );
 }

@@ -1,0 +1,60 @@
+#settings_form_container {
+  min-height: 40%;
+  min-width: 50%;
+  background: #fff;
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+#settings_form {
+  /* display: flex;
+  flex-direction: column;
+  justify-content: start;
+  gap: 0.375rem; */
+}
+
+#settings_form>* {
+  margin: 0;
+  padding: 0;
+}
+
+#button_row {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+#button_row button {
+  all: unset;
+  height: auto;
+  width: auto;
+  box-sizing: border-box;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+}
+
+#fuzzy_row {
+  display: flex;
+  margin-top: 5vh;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+#button_cancel {
+  border: 0.5px solid #ddd !important;
+}
+
+#checkbox_row {
+  display: flex;
+  align-items: center;
+}
+
+#button_save {
+  background-color: #4158d0 !important;
+  opacity: 70% !important;
+  color: white !important;
+}

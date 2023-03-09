@@ -1,13 +1,21 @@
 #form {
-  margin-bottom: 12px;
+  margin-bottom: 0.75rem;
+  display: flex;
+  flex-direction: row;
+  column-gap: 0.375rem;
+  justify-content: center;
+  align-items: center;
+  flex-flow: wrap;
 }
 
 #input_text {
+  flex: auto;
+  height: 1.5rem;
   box-sizing: border-box;
   border: 0.5px solid #aaa;
-  border-radius: 4px;
-  padding: 4px 6px;
-  min-height: 26px;
+  border-radius: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
 }
 
 #input_text:focus {
@@ -15,7 +23,16 @@
 }
 
 #input_submit {
-  border: 0.5px solid #aaa;
-  border-radius: 4px;
-  min-height: 26px;
+  all: unset;
+  flex: auto;
+  height: 1.5rem;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  background-color: #4158d0;
+  opacity: 70%;
+  color: white;
+  cursor: pointer;
 }
