@@ -42,13 +42,7 @@
   height: var(--pill-height);
   padding: 0.25rem;
   z-index: 5;
-  margin-left: calc(
-    1 *
-      calc(
-        calc(var(--pill-width)) -
-          calc(min(var(--pill-height), var(--pill-width)))
-      )
-  );
+  margin-left: calc(1 * calc(calc(var(--pill-width)) - calc(min(var(--pill-height), var(--pill-width)))));
   cursor: grab;
   animation: wiggle 800ms ease 300ms 1 normal;
 }
@@ -58,10 +52,21 @@
 }
 
 @keyframes wiggle {
-  0% { scale: 1; }
-  35% { scale: 1.2; }
-  45% { transform: rotate(-10deg); }
-  70% { transform: rotate(3deg); }
+  0% {
+    scale: 1;
+  }
+
+  35% {
+    scale: 1.2;
+  }
+
+  45% {
+    transform: rotate(-10deg);
+  }
+
+  70% {
+    transform: rotate(3deg);
+  }
 }
 
 #peach.toggled {
@@ -72,10 +77,7 @@
   position: absolute;
   height: var(--circle-size);
   width: var(--circle-size);
-  margin-left: calc(
-    -1 * calc(calc(var(--pill-width)) -
-          calc(min(var(--pill-height), var(--pill-width))))
-  );
+  margin-left: calc(-1 * calc(calc(var(--pill-width)) - calc(min(var(--pill-height), var(--pill-width)))));
   z-index: 6;
   border: solid 0.5px #ddd;
   border-radius: calc(var(--circle-size) / 2);
@@ -85,15 +87,30 @@
 }
 
 #circle.toggled {
-  margin-left: calc(
-    1 *
-      calc(
-        calc(var(--pill-width)) -
-          calc(min(var(--pill-height), var(--pill-width)))
-      )
-  ) !important;
+  margin-left: calc(1 * calc(calc(var(--pill-width)) - calc(min(var(--pill-height), var(--pill-width))))) !important;
+  background-color: #6fbf73;
 }
 
 #circle.transition {
   transition: margin-left 400ms;
+}
+
+#circle.processing {
+  background-color: rgb(217, 217, 9);
+  animation: pulse 2s;
+  animation-iteration-count: infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }

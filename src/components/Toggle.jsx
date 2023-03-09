@@ -4,7 +4,7 @@ import peachUrl from '@/assets/peach.png';
 
 import styles from '@/styles/Toggle.module.css';
 
-export default function Toggle({ covered, setCovered, processing, pillRef, peachRef, circleRef }) {
+export default function Toggle({ covered, setCovered, processingHide, processing, pillRef, peachRef, circleRef }) {
   const initialRender = useRef(true);
 
   useEffect(() => {
@@ -16,6 +16,11 @@ export default function Toggle({ covered, setCovered, processing, pillRef, peach
   useEffect(() => {
     initialRender.current = false;
   }, []);
+
+  useEffect(() => {
+    if (processingHide) return circleRef.current.classList.add(styles.processing)
+    return circleRef.current.classList.remove(styles.processing)
+  }, [processingHide])
 
   return (
     <div id={styles.switch_container}>
@@ -48,7 +53,7 @@ export default function Toggle({ covered, setCovered, processing, pillRef, peach
           ${styles.border_box} 
           ${covered ? styles.toggled : ''} 
         `}
-      />
+      >{processingHide && <p style={{ textAlign: "center" }}>Wait!</p>}</div>
     </div>
   );
 }

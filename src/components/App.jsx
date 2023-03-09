@@ -31,6 +31,8 @@ import listStyles from '@/styles/TermsList.module.css';
 export default function App() {
   const [covered, setCovered] = useState(loadCovered());
   const [showList, setShowList] = useState(false);
+  const [processingHide, setProcessingHide] = useState(false);
+
   const [termsList, setTermsList] = useState(new Set(loadTermsList()));
   const [cookieCountByTerm, setCookieCountByTerm] = useState(loadCookieCountByTerm());
   const [historyItemCountByTerm, setHistoryItemCountByTerm] = useState(loadHistoryItemCountByTerm());
@@ -43,6 +45,7 @@ export default function App() {
   const listRef = useRef(null);
 
   const selectivelyHideHistoryAndCookies = async (historyEnabled, cookiesEnabled, fuzzySearchEnabled) => {
+    setProcessingHide(true);
     processing.current = true;
     const processingHistory = historyEnabled
       ? Promise.resolve()
@@ -57,6 +60,7 @@ export default function App() {
         if (historyEnabled) setHistoryItemCountByTerm(loadHistoryItemCountByTerm());
         if (cookiesEnabled) setCookieCountByTerm(loadCookieCountByTerm());
         processing.current = false;
+        setProcessingHide(false);
         return true;
       });
   };
@@ -65,6 +69,7 @@ export default function App() {
     return Promise.resolve().then((_) => {
       restoreHistoryItems();
       restoreCookies();
+
       return true;
     });
   };
@@ -141,6 +146,7 @@ export default function App() {
               covered={covered}
               setCovered={setCovered}
               processing={processing}
+              processingHide={processingHide}
               pillRef={pillRef}
               peachRef={peachRef}
               circleRef={circleRef}
