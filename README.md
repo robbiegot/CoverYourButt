@@ -48,7 +48,11 @@
 
 Googling a birthday surprise on your family computer?? Trying to get ride of embarrasing search history before a presentation?
 
-![Product Name Screen Shot][product-screenshot]
+<p align="center">
+  <kbd>
+  <img src="./public/product-screenshot.png">
+    </kbd>
+</p>
 
 The CoverYourButt Chrome extension will *temporarily* cover up your browser history *without* 
 losing access to key information that's stored in your chrome profile (passwords, autocomplete, etc.) 
@@ -128,7 +132,6 @@ Project Link: [https://github.com/robbiegot/CoverYourButt](https://github.com/ro
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url-Rob]: https://www.linkedin.com/in/robbie-gottlieb/
 [linkedin-url-Jon]: https://www.linkedin.com/in/jh5/
-[product-screenshot]: ./public/product-screenshot.png
 [license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge
 [React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
 [Vite.js]: https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E
