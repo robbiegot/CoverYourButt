@@ -20,7 +20,7 @@ export default function SettingsForm({ setShowModal }) {
   const [fuzzySearchPreference, setFuzzySearchPreference] = useState(loadFuzzySearchPreference());
 
   useEffect(() => {
-    [historyRef.current.checked, cookiesRef.current.checked] = [loadHistoryPreference(), loadCookiesPreference()];
+    [historyRef.current.checked, cookiesRef.current.checked] = [true, loadCookiesPreference()];
   }, []);
 
   useEffect(() => {
@@ -31,13 +31,15 @@ export default function SettingsForm({ setShowModal }) {
     <div id={styles.settings_form_container}>
       <form id={styles.settings_form}>
         <p>Hide items from: </p>
-        <input id={styles.input_text} ref={historyRef} type="checkbox" />
-        <label htmlFor={styles.input_text}>history</label>
-        <br />
-        <input id={styles.input_text} ref={cookiesRef} type="checkbox" />
-        <label htmlFor={styles.input_text}>cookies</label>
-        <br />
-        <div id={styles.fuzzy_row}>
+        <div id={styles.checkbox_row}>
+          <input id={styles.input_text} ref={historyRef} type="checkbox" disabled="disabled" checked="checked" />
+          <label htmlFor={styles.input_text}>History</label>
+        </div>
+        <div id={styles.checkbox_row}>
+          <input id={styles.input_text} ref={cookiesRef} type="checkbox" />
+          <label htmlFor={styles.input_text}>Cookies</label>
+        </div>
+        <div id={styles.fuzzy_row} >
           <label htmlFor="input_fuzzy">Enable fuzzy search</label>
           <Toggle
             id="input_fuzzy"
@@ -47,7 +49,8 @@ export default function SettingsForm({ setShowModal }) {
             }}
           />
         </div>
-      </form>
+        <p>(Not Recommended)</p>
+      </form >
       <div id={styles.button_row}>
         <button
           id={styles.button_cancel}
@@ -68,6 +71,6 @@ export default function SettingsForm({ setShowModal }) {
           Save
         </button>
       </div>
-    </div>
+    </div >
   );
 }

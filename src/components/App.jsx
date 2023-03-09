@@ -52,19 +52,22 @@ export default function App() {
     })()}`)
     setProcessingHide(true);
     processing.current = true;
-    const processingHistory = historyEnabled ? hideHistoryItems(10000, fuzzySearchEnabled) : Promise.resolve();
-    const processingCookies = cookiesEnabled ? hideCookies() : Promise.resolve();
-    Promise.all([processingHistory, processingCookies]).then((_) => {
-      if (historyEnabled) setHistoryItemCountByTerm(loadHistoryItemCountByTerm());
-      if (cookiesEnabled) setCookieCountByTerm(loadCookieCountByTerm());
-      processing.current = false;
-      setProcessingHide(false);
-      console.log(`End @ ${(() => {
-        const now = Date.now() + '';
-        return now.slice(now.length - 7, now.length - 1)
-      })()}`)
-      return true;
-    });
+    const processingHistory = historyEnabled
+      ? Promise.resolve()
+        .then((_) => hideHistoryItems(10000, fuzzySearchEnabled))
+      : null;
+    const processingCookies = cookiesEnabled
+      ? Promise.resolve()
+        .then((_) => hideCookies())
+      : null;
+    Promise.all([processingHistory, processingCookies])
+      .then((_) => {
+        if (historyEnabled) setHistoryItemCountByTerm(loadHistoryItemCountByTerm());
+        if (cookiesEnabled) setCookieCountByTerm(loadCookieCountByTerm());
+        processing.current = false;
+        setTimeout(() => setProcessingHide(false), 2000)
+        return true;
+      });
   };
 
   const restoreHistoryAndCookies = async () => {
@@ -159,7 +162,8 @@ export default function App() {
           <section className={styles.spacer}>
             <p>
               Your butt is
-              <strong> {covered ? 'COVERED' : 'SHOWING '}</strong>
+              {processingHide && <strong>...Searching For History</strong>}
+              {!processingHide && <strong> {covered ? 'COVERED' : 'SHOWING '}</strong>}
               {!covered && <FiAlertTriangle />}
             </p>
           </section>
