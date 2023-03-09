@@ -45,6 +45,10 @@ export default function Toggle({ covered, setCovered, processingHide, processing
       <div
         id={styles.circle}
         onClick={() => {
+          console.log(`Click Event @ ${(() => {
+            const now = Date.now() + '';
+            return now.slice(now.length - 7, now.length - 1)
+          })()}`)
           if (processing.current) return;
           setCovered(() => !covered);
         }}
