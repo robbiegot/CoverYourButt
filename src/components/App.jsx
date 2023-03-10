@@ -46,28 +46,24 @@ export default function App() {
 
   const selectivelyHideHistoryAndCookies = async (historyEnabled, cookiesEnabled, fuzzySearchEnabled) => {
     const start = Date.now();
-    console.log(`start @ ${(() => {
-      const now = Date.now() + '';
-      return now.slice(now.length - 7, now.length - 1)
-    })()}`)
+    console.log(
+      `start @ ${(() => {
+        const now = Date.now() + '';
+        return now.slice(now.length - 7, now.length - 1);
+      })()}`
+    );
     setProcessingHide(true);
     processing.current = true;
-    const processingHistory = historyEnabled
-      ? Promise.resolve()
-        .then((_) => hideHistoryItems(10000, fuzzySearchEnabled))
-      : null;
-    const processingCookies = cookiesEnabled
-      ? Promise.resolve()
-        .then((_) => hideCookies())
-      : null;
-    Promise.all([processingHistory, processingCookies])
-      .then((_) => {
-        if (historyEnabled) setHistoryItemCountByTerm(loadHistoryItemCountByTerm());
-        if (cookiesEnabled) setCookieCountByTerm(loadCookieCountByTerm());
-        processing.current = false;
-        setTimeout(() => setProcessingHide(false), 2000)
-        return true;
-      });
+    Promise.all([
+      historyEnabled ? Promise.resolve().then((_) => hideHistoryItems(10000, fuzzySearchEnabled)) : Promise.resolve(),
+      cookiesEnabled ? Promise.resolve().then((_) => hideCookies()) : Promise.resolve()
+    ]).then((_) => {
+      if (historyEnabled) setHistoryItemCountByTerm(loadHistoryItemCountByTerm());
+      if (cookiesEnabled) setCookieCountByTerm(loadCookieCountByTerm());
+      processing.current = false;
+      setTimeout(() => setProcessingHide(false), 2000);
+      return true;
+    });
   };
 
   const restoreHistoryAndCookies = async () => {
@@ -81,18 +77,18 @@ export default function App() {
   useEffect(() => {
     if (initialRender.current) return;
     if (covered) {
-    console.log('Starting');
+      console.log('Starting');
       const [historyEnabled, cookiesEnabled, fuzzySearchEnabled] = [
         loadHistoryPreference(),
         loadCookiesPreference(),
         loadFuzzySearchPreference(),
       ];
       Promise.resolve().then((_) => {
-      selectivelyHideHistoryAndCookies(historyEnabled, cookiesEnabled, fuzzySearchEnabled).then(() => {
-        if (historyEnabled) setHistoryItemCountByTerm(loadHistoryItemCountByTerm());
-        if (cookiesEnabled) setCookieCountByTerm(loadCookieCountByTerm());
+        selectivelyHideHistoryAndCookies(historyEnabled, cookiesEnabled, fuzzySearchEnabled).then(() => {
+          if (historyEnabled) setHistoryItemCountByTerm(loadHistoryItemCountByTerm());
+          if (cookiesEnabled) setCookieCountByTerm(loadCookieCountByTerm());
+        });
       });
-    })
     } else {
       restoreHistoryAndCookies().then(() => {
         setHistoryItemCountByTerm({});
