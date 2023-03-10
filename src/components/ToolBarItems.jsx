@@ -38,7 +38,7 @@ export default function ToolBarItems() {
           />
         </div>
         {showModal && (
-          <Modal>
+          <Modal background={'rgba(0, 0, 0, 0.2)'}>
             <SettingsForm setShowModal={setShowModal} />
           </Modal>
         )}

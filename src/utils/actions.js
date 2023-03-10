@@ -149,7 +149,7 @@ function clearCookieCountByTerm() {
   return localStorage.removeItem('cookieCountByTerm');
 }
 
-export function restoreHistoryItems() {
+export async function restoreHistoryItems() {
   const historyItemsToRestore = JSON.parse(localStorage.getItem('hiddenHistoryItems') || '[]'); // * hiddenHistoryItems is stored as { url: string }[]
   historyItemsToRestore?.forEach((UrlDetails) => {
     chrome.history.addUrl(UrlDetails);
@@ -158,7 +158,7 @@ export function restoreHistoryItems() {
   clearHistoryItemCountByTerm();
 }
 
-export function restoreCookies() {
+export async function restoreCookies() {
   const cookiesToRestore = JSON.parse(localStorage.getItem('hiddenCookies') || '[]');
   cookiesToRestore?.forEach(
     ({ domain, expirationDate, httpOnly, name, path, sameSite, secure, storeId, url, value }) => {

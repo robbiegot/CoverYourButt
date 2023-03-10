@@ -31,45 +31,34 @@ import listStyles from '@/styles/TermsList.module.css';
 export default function App() {
   const [covered, setCovered] = useState(loadCovered());
   const [showList, setShowList] = useState(false);
-  const [processingHide, setProcessingHide] = useState(false);
-
+  const [processing, setProcessing] = useState(false);
   const [termsList, setTermsList] = useState(new Set(loadTermsList()));
   const [cookieCountByTerm, setCookieCountByTerm] = useState(loadCookieCountByTerm());
   const [historyItemCountByTerm, setHistoryItemCountByTerm] = useState(loadHistoryItemCountByTerm());
 
   const initialRender = useRef(true);
-  const processing = useRef(false);
   const pillRef = useRef(null);
   const peachRef = useRef(null);
   const circleRef = useRef(null);
   const listRef = useRef(null);
 
   const selectivelyHideHistoryAndCookies = async (historyEnabled, cookiesEnabled, fuzzySearchEnabled) => {
-    setProcessingHide(true);
-    processing.current = true;
-    const processingHistory = historyEnabled
-      ? Promise.resolve()
-        .then((_) => hideHistoryItems(10000, fuzzySearchEnabled))
-      : null;
-    const processingCookies = cookiesEnabled
-      ? Promise.resolve()
-        .then((_) => hideCookies())
-      : null;
-    Promise.all([processingHistory, processingCookies])
-      .then((_) => {
-        if (historyEnabled) setHistoryItemCountByTerm(loadHistoryItemCountByTerm());
-        if (cookiesEnabled) setCookieCountByTerm(loadCookieCountByTerm());
-        processing.current = false;
-        setTimeout(() => setProcessingHide(false), 2000)
-        return true;
-      });
+    setProcessing(true);
+    return Promise.all([
+      historyEnabled ? Promise.resolve().then((_) => hideHistoryItems(10000, fuzzySearchEnabled)) : Promise.resolve(),
+      cookiesEnabled ? Promise.resolve().then((_) => hideCookies()) : Promise.resolve(),
+    ]).then((_) => {
+      if (historyEnabled) setHistoryItemCountByTerm(loadHistoryItemCountByTerm());
+      if (cookiesEnabled) setCookieCountByTerm(loadCookieCountByTerm());
+      setProcessing(false);
+      return true;
+    });
   };
 
   const restoreHistoryAndCookies = async () => {
     return Promise.resolve().then((_) => {
       restoreHistoryItems();
       restoreCookies();
-
       return true;
     });
   };
@@ -146,7 +135,7 @@ export default function App() {
               covered={covered}
               setCovered={setCovered}
               processing={processing}
-              processingHide={processingHide}
+              processingHide={processing}
               pillRef={pillRef}
               peachRef={peachRef}
               circleRef={circleRef}
@@ -155,8 +144,8 @@ export default function App() {
           <section className={styles.spacer}>
             <p>
               Your butt is
-              {processingHide && <strong>...Searching For History</strong>}
-              {!processingHide && <strong> {covered ? 'COVERED' : 'SHOWING '}</strong>}
+              {processing && <strong>...Searching For History</strong>}
+              {!processing && <strong> {covered ? 'COVERED' : 'SHOWING '}</strong>}
               {!covered && <FiAlertTriangle />}
             </p>
           </section>
