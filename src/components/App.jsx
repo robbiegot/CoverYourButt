@@ -31,37 +31,26 @@ import listStyles from '@/styles/TermsList.module.css';
 export default function App() {
   const [covered, setCovered] = useState(loadCovered());
   const [showList, setShowList] = useState(false);
-  const [processingHide, setProcessingHide] = useState(false);
-
+  const [processing, setProcessing] = useState(false);
   const [termsList, setTermsList] = useState(new Set(loadTermsList()));
   const [cookieCountByTerm, setCookieCountByTerm] = useState(loadCookieCountByTerm());
   const [historyItemCountByTerm, setHistoryItemCountByTerm] = useState(loadHistoryItemCountByTerm());
 
   const initialRender = useRef(true);
-  const processing = useRef(false);
   const pillRef = useRef(null);
   const peachRef = useRef(null);
   const circleRef = useRef(null);
   const listRef = useRef(null);
 
   const selectivelyHideHistoryAndCookies = async (historyEnabled, cookiesEnabled, fuzzySearchEnabled) => {
-    const start = Date.now();
-    console.log(
-      `start @ ${(() => {
-        const now = Date.now() + '';
-        return now.slice(now.length - 7, now.length - 1);
-      })()}`
-    );
-    setProcessingHide(true);
-    processing.current = true;
-    Promise.all([
+    setProcessing(true);
+    return Promise.all([
       historyEnabled ? Promise.resolve().then((_) => hideHistoryItems(10000, fuzzySearchEnabled)) : Promise.resolve(),
-      cookiesEnabled ? Promise.resolve().then((_) => hideCookies()) : Promise.resolve()
+      cookiesEnabled ? Promise.resolve().then((_) => hideCookies()) : Promise.resolve(),
     ]).then((_) => {
       if (historyEnabled) setHistoryItemCountByTerm(loadHistoryItemCountByTerm());
       if (cookiesEnabled) setCookieCountByTerm(loadCookieCountByTerm());
-      processing.current = false;
-      setTimeout(() => setProcessingHide(false), 2000);
+      setProcessing(false);
       return true;
     });
   };
@@ -77,17 +66,14 @@ export default function App() {
   useEffect(() => {
     if (initialRender.current) return;
     if (covered) {
-      console.log('Starting');
       const [historyEnabled, cookiesEnabled, fuzzySearchEnabled] = [
         loadHistoryPreference(),
         loadCookiesPreference(),
         loadFuzzySearchPreference(),
       ];
-      Promise.resolve().then((_) => {
-        selectivelyHideHistoryAndCookies(historyEnabled, cookiesEnabled, fuzzySearchEnabled).then(() => {
-          if (historyEnabled) setHistoryItemCountByTerm(loadHistoryItemCountByTerm());
-          if (cookiesEnabled) setCookieCountByTerm(loadCookieCountByTerm());
-        });
+      selectivelyHideHistoryAndCookies(historyEnabled, cookiesEnabled, fuzzySearchEnabled).then(() => {
+        if (historyEnabled) setHistoryItemCountByTerm(loadHistoryItemCountByTerm());
+        if (cookiesEnabled) setCookieCountByTerm(loadCookieCountByTerm());
       });
     } else {
       restoreHistoryAndCookies().then(() => {
@@ -149,7 +135,7 @@ export default function App() {
               covered={covered}
               setCovered={setCovered}
               processing={processing}
-              processingHide={processingHide}
+              processingHide={processing}
               pillRef={pillRef}
               peachRef={peachRef}
               circleRef={circleRef}
@@ -158,8 +144,8 @@ export default function App() {
           <section className={styles.spacer}>
             <p>
               Your butt is
-              {processingHide && <strong>...Searching For History</strong>}
-              {!processingHide && <strong> {covered ? 'COVERED' : 'SHOWING '}</strong>}
+              {processing && <strong>...Searching For History</strong>}
+              {!processing && <strong> {covered ? 'COVERED' : 'SHOWING '}</strong>}
               {!covered && <FiAlertTriangle />}
             </p>
           </section>
